@@ -1,0 +1,227 @@
+# Getting Started with Quantstrat
+
+First we should install the tidyverse package and other packages used by quantstrat
+
+```{r}
+install.packages("tidyverse")
+install.packages("quantmod")
+```
+
+Next we need to install quantstrat which has to be done from github not CRAN. 
+
+```{r}
+install.packages("remotes")
+remotes::install_github("braverock/quantstrat", dependencies = TRUE, INSTALL_opts = "--no-lock")
+```
+
+Now we can load the libraries we will be using 
+
+```{r}
+library(tidyverse)
+library(quantmod)
+library(quantstrat)
+```
+
+# Types of Trading 
+
+Generally there are two types: 
+
+1. Trend/momentum trading 
+2. Mean reversion/oscillation trading
+
+Strategies are prone overfitting and the following can be done to reduce this risk: 
+
+- Reduce number of parameters
+- Conduct a statistical test on significance of the stratey 
+
+# Getting Financial Data 
+
+Generally most sources cost money as they are real time feeds aimed at professionals. Yahoo finance though offers free data and can be accessed through the quantmod library. 
+
+| Column/Variable | Meaning                                         |
+| --------------- | ----------------------------------------------- |
+| Op              | Opening day                                     |
+| Hi              | Highest price                                   |
+| Lo              | Lowest price                                    |
+| Cl              | Closing price                                   |
+| Vo              | Number of trades that day                       |
+| Adj             | Closing price adjusted for dividends and splits |
+
+Dividends are payouts to shareholders, and splits are when shares are broken up into more. Generally, these actions will cause the market price to change making the adjusted price more reflective. 
+
+```{r}
+quantmod::getSymbols("BTC-USD",
+    from = Sys.Date() - 365 * 2,
+    to = Sys.Date(),
+    src = "yahoo",
+    adjust = TRUE
+)
+
+plot(Cl(`BTC-USD`))
+lines(SMA(Cl(`BTC-USD`), n = 25), col = "blue")
+lines(SMA(Cl(`BTC-USD`), n = 100), col = "red")
+```
+
+# Setting up a Strategy 
+
+## Initialization 
+
+First we need to initialize a account, portfolio, and strategy along with initial parameters of these initializations. 
+
+```{r}
+initdate <- "2010-01-01"
+from <- Sys.Date() - (365 * 5)
+to <- Sys.Date()
+
+Sys.setenv(TZ = "UTC")
+
+currency("USD")
+
+getSymbols("BTC-USD", from = from, to = to, src = "yahoo", adjust = TRUE)
+
+stock("BTC-USD", currency = "USD")
+
+tradesize <- 10
+initeq <- 100
+
+strategy.st <- "firststrat"
+portfolio.st <- "firststrat"
+account.st <- "firststrat"
+
+# remove strategy if existing
+rm.strat(strategy.st)
+
+initPortf(
+    portfolio.st,
+    symbols = "BTC-USD",
+    initDate = initdate,
+    currency = "USD"
+)
+
+initAcct(
+    account.st,
+    portfolios = portfolio.st,
+    initDate = initdate,
+    currency = "USD",
+    initEq = initeq
+)
+
+initOrders(portfolio.st, initDate = initdate)
+
+# store the strategy
+strategy(strategy.st, store = TRUE)
+```
+
+## Adding Signals to the Strategy using Indicators 
+
+We are going to use the simple 200 vs 50 moving day average strategy. 
+
+```{r}
+add.indicator(
+    strategy = strategy.st,
+    name = "SMA",
+    arguments = list(x = quote(Cl(mktdata)), n = 200),
+    label = "SMA200"
+)
+
+add.indicator(
+    strategy = strategy.st,
+    name = "SMA",
+    arguments = list(x = quote(Cl(mktdata)), n = 50),
+    label = "SMA50"
+)
+```
+
+Now we can create two signals, one to tell us when the SMA50 is greater than the SMA200 and another to tell us when the opposite is true. 
+
+```{r}
+add.signal(strategy.st,
+    name = "sigComparison",
+    arguments = list(
+        columns = c("SMA50", "SMA200"),
+        relationship = "gt"
+    ),
+    label = "longfilter"
+)
+
+add.signal(strategy.st,
+    name = "sigCrossover",
+    arguments = list(
+        columns = c("SMA50", "SMA200"),
+        relationship = "lt"
+    ),
+    label = "filterexit"
+)
+```
+
+```{r}
+test_init <- applyIndicators(strategy.st, mktdata = OHLC(SPY))
+test <- applySignals(strategy = strategy.st, mktdata = test_init)
+
+add.signal(strategy.st,
+    name = "sigFormula",
+    arguments = list(
+        formula = "longfilter",
+        cross = TRUE
+    ),
+    label = "longentry"
+)
+```
+
+We can now create an entry rule, the algorithm will purchase when all conditions are met. 
+
+```{r}
+add.rule(strategy.st,
+    name = "ruleSignal",
+    arguments = list(
+        sigcol = "longentry",
+        sigval = TRUE,
+        orderqty = 1,
+        ordertype = "market",
+        orderside = "long",
+        replace = FALSE,
+        prefer = "Open"
+    ),
+    type = "enter"
+)
+```
+
+And an exit rule 
+
+```{r}
+add.rule(strategy.st,
+    name = "ruleSignal",
+    arguments = list(
+        sigcol = "filterexit", sigval = TRUE, orderqty = "all",
+        ordertype = "market", orderside = "long",
+        replace = FALSE, prefer = "Open"
+    ),
+    type = "exit"
+)
+```
+
+We can now apply the strategy 
+
+```{r}
+out <- applyStrategy(strategy = strategy.st, portfolios = portfolio.st)
+
+updatePortf(portfolio.st)
+daterange <- time(getPortfolio(portfolio.st)$summary)[-1]
+
+updateAcct(account.st, daterange)
+updateEndEq(account.st)
+
+tstats <- tradeStats(Portfolios = portfolio.st)
+```
+
+We can now look at trading statistics for this strategy 
+
+```{R}
+knitr::kable(t(tstats))
+
+chart.Posn(Portfolio = portfolio.st, Symbol = "BTC-USD")
+
+instrets <- PortfReturns(portfolio.st)
+
+SharpeRatio.annualized(instrets, geometric = FALSE)
+```

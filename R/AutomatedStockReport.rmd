@@ -1,0 +1,293 @@
+---
+title: "Big Tech Stock Price Report"
+author: "Zenith" 
+date: "`r Sys.Date()`"
+output : 
+  html_document:
+    theme: cosmo
+    highlight: tango
+    fig_width: 10
+    fig_height: 8
+---
+
+TODO: 
+- add titles on all charts and tables
+- rename some columns (e.g. start price to price date, end price to price date, percentage change to price change)
+- commentary on what each part is showing/doing. 
+
+
+# Big Tech Stock Price Report 
+
+This report automates a monthly report of the major publicly traded US Tech companies. The report provides the following: 
+
+- A summary of the price action over the last month.
+- A candlestick chart of the stock prices over the last month.
+- A table of the forecastle stock prices for the next 30 days.
+- A line chart of the forecasted stock prices for the next 30 days.
+  
+```{r, echo=FALSE, warning=FALSE, message=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+library(tidyquant)
+library(tidyverse)
+library(fpp3)
+library(plotly)
+library(knitr)
+library(kableExtra)
+library(timetk)
+library(forecast)
+
+current_date <- Sys.Date()
+start_date <- current_date - 1095
+
+amazon_price <- tidyquant::tq_get(
+  "AMZN",
+  from = start_date, to = current_date
+)
+apple_price <- tidyquant::tq_get(
+  "AAPL",
+  from = start_date, to = current_date
+)
+facebook_price <- tidyquant::tq_get(
+  "META",
+  from = start_date, to = current_date
+)
+google_price <- tidyquant::tq_get(
+  "GOOGL",
+  from = start_date, to = current_date
+)
+microsoft_price <- tidyquant::tq_get(
+  "MSFT",
+  from = start_date, to = current_date
+)
+
+combined_prices <- bind_rows(
+  amazon_price %>% mutate(stock = "AMZN"),
+  apple_price %>% mutate(stock = "AAPL"),
+  facebook_price %>% mutate(stock = "META"),
+  google_price %>% mutate(stock = "GOOGL"),
+  microsoft_price %>% mutate(stock = "MSFT")
+)
+
+combined_prices <- combined_prices %>%
+  group_by(stock) %>%
+  mutate(percentage_change = (adjusted / lag(adjusted) - 1) * 100) %>%
+  ungroup()
+```
+
+This analysis is current as of `r current_date`.
+
+# Price Action Summary 
+
+```{r, echo=FALSE, warning=FALSE, message=FALSE}
+combined_prices %>%
+  filter(date > current_date - 30) %>%
+  group_by(stock) %>%
+  summarise(
+    start_price = first(adjusted),
+    end_price = last(adjusted),
+    percentage_change = last(percentage_change)
+  ) %>%
+  arrange(desc(percentage_change)) %>%
+  mutate(
+    start_price = round(start_price, 2),
+    end_price = round(end_price, 2),
+    percentage_change = round(percentage_change, 2)
+  ) %>%
+  kable() %>%
+  kable_styling()
+
+best_stock_last_month <- combined_prices %>%
+  filter(date > current_date - 30) %>%
+  group_by(stock) %>%
+  summarise(
+    percentage_change = last(percentage_change)
+  ) %>%
+  mutate(percentage_change = round(percentage_change, 2)) %>%
+  arrange(desc(percentage_change)) %>%
+  slice(1)
+
+worst_stock_last_month <- combined_prices %>%
+  filter(date > current_date - 30) %>%
+  group_by(stock) %>%
+  summarise(
+    percentage_change = last(percentage_change)
+  ) %>%
+  mutate(percentage_change = round(percentage_change, 2)) %>%
+  arrange(percentage_change) %>%
+  slice(1)
+```
+
+The best performing stock over the last month was `r best_stock_last_month$stock` with a percentage change of `r best_stock_last_month$percentage_change`%. The worst performing stock over the last month was `r worst_stock_last_month$stock` with a percentage change of `r worst_stock_last_month$percentage_change`%.
+
+# Candlestick Chart of Stock Prices Over Last Month
+
+```{r, echo=FALSE, warning=FALSE, message=FALSE}
+combined_prices %>%
+  plot_ly(
+    x = ~date, type = "candlestick", open = ~open, close = ~close,
+    high = ~high, low = ~low, color = ~stock
+  ) %>%
+  layout(
+    title = "Big Tech Stocks",
+    xaxis = list(title = "Date"),
+    yaxis = list(title = "Price"),
+    updatemenus = list(
+      list(
+        y = 0.8,
+        buttons = list(
+          list(
+            method = "restyle",
+            args = list("visible", list(TRUE, FALSE, FALSE, FALSE, FALSE)),
+            label = "AMZN"
+          ),
+          list(
+            method = "restyle",
+            args = list("visible", list(FALSE, TRUE, FALSE, FALSE, FALSE)),
+            label = "AAPL"
+          ),
+          list(
+            method = "restyle",
+            args = list("visible", list(FALSE, FALSE, TRUE, FALSE, FALSE)),
+            label = "META"
+          ),
+          list(
+            method = "restyle",
+            args = list("visible", list(FALSE, FALSE, FALSE, TRUE, FALSE)),
+            label = "GOOGL"
+          ),
+          list(
+            method = "restyle",
+            args = list("visible", list(FALSE, FALSE, FALSE, FALSE, TRUE)),
+            label = "MSFT"
+          )
+        )
+      )
+    )
+  )
+```
+
+# Stock Price Forcasts 
+
+```{r, echo=FALSE, warning=FALSE, message=FALSE}
+generate_arima_forecast <- function(stock_data) {
+  ts_data <- ts(stock_data$adjusted, frequency = 1)
+  arima_model <- auto.arima(ts_data)
+  forecast_result <- forecast(arima_model, h = 30)
+  forecast_values <- as.numeric(forecast_result$mean)
+  return(forecast_values)
+}
+
+forecast_list <- combined_prices %>%
+  group_by(stock) %>%
+  nest() %>%
+  mutate(forecast = map(data, generate_arima_forecast))
+
+forecast_summary <- forecast_list %>%
+  unnest(cols = c(forecast)) %>%
+  mutate(date = seq.Date(
+    from = current_date + 1,
+    by = "day",
+    length.out = 30
+  ))
+
+best_forecast_stock <- forecast_summary %>%
+  group_by(stock) %>%
+  summarise(
+    forecast = last(forecast)
+  ) %>%
+  mutate(forecast = round(forecast, 2)) %>%
+  arrange(desc(forecast)) %>%
+  slice(1)
+
+worst_forecast_stock <- forecast_summary %>%
+  group_by(stock) %>%
+  summarise(
+    forecast = last(forecast)
+  ) %>%
+  mutate(forecast = round(forecast, 2)) %>%
+  arrange(forecast) %>%
+  slice(1)
+
+combined_prices_to_join <- mutate(combined_prices, date = as.Date(date)) %>%
+  select(date, symbol, adjusted) %>%
+  filter(date > current_date - 30)
+
+forecast_to_join <- forecast_summary %>%
+  rename(symbol = stock) %>%
+  select(date, symbol, forecast) %>%
+  as_tibble(forecast_to_join) %>%
+  select(date, symbol, forecast)
+
+forecast_visual_df <- full_join(
+  combined_prices_to_join, forecast_to_join,
+  by = c("date", "symbol")
+)
+
+forecast_visual_df %>%
+  group_by(symbol) %>%
+  summarise(
+    last_close = last(adjusted[!is.na(adjusted)]),
+    last_forecast = last(forecast),
+    percentage_change = ((last_forecast / last_close) - 1) * 100
+  ) %>%
+  arrange(desc(percentage_change)) %>%
+  mutate(
+    last_close = round(last_close, 2),
+    last_forecast = round(last_forecast, 2),
+    percentage_change = round(percentage_change, 2)
+  ) %>%
+  kable() %>%
+  kable_styling()
+```
+
+The best forecasted stock over the next 30 days is `r best_forecast_stock$stock` with a forecasted price of `r best_forecast_stock$forecast`. The worst forecasted stock over the next 30 days is `r worst_forecast_stock$stock` with a forecasted price of `r worst_forecast_stock$forecast`.
+
+```{r, echo=FALSE, warning=FALSE, message=FALSE}
+forecast_visual_df %>%
+  plot_ly(
+    x = ~date, y = ~forecast, color = ~symbol, type = "scatter",
+    mode = "lines", name = "Forecast", line = list(dash = "dot")
+  ) %>%
+  add_trace(
+    x = ~date, y = ~adjusted, color = ~symbol, type = "scatter",
+    mode = "lines", name = "Month Prior", line = list(dash = "solid")
+  ) %>%
+  layout(
+    title = "Stock Price Forecast",
+    xaxis = list(title = "Date"),
+    yaxis = list(title = "Price"),
+    updatemenus = list(
+      list(
+        y = 0.8,
+        buttons = list(
+          list(
+            method = "restyle",
+            args = list("visible", list(TRUE, FALSE, FALSE, FALSE, FALSE)),
+            label = "AMZN"
+          ),
+          list(
+            method = "restyle",
+            args = list("visible", list(FALSE, TRUE, FALSE, FALSE, FALSE)),
+            label = "AAPL"
+          ),
+          list(
+            method = "restyle",
+            args = list("visible", list(FALSE, FALSE, TRUE, FALSE, FALSE)),
+            label = "META"
+          ),
+          list(
+            method = "restyle",
+            args = list("visible", list(FALSE, FALSE, FALSE, TRUE, FALSE)),
+            label = "GOOGL"
+          ),
+          list(
+            method = "restyle",
+            args = list("visible", list(FALSE, FALSE, FALSE, FALSE, TRUE)),
+            label = "MSFT"
+          )
+        )
+      )
+    )
+  )
+```
+
