@@ -1,0 +1,221 @@
+{
+  "config": "{\"version\":\"5.51\",\"themeCollection\":{\"baseTheme\":{\"name\":\"CY24SU02\",\"version\":\"5.51\",\"type\":2}},\"activeSectionIndex\":0,\"defaultDrillFilterOtherVisuals\":true,\"slowDataSourceSettings\":{\"isCrossHighlightingDisabled\":false,\"isSlicerSelectionsButtonEnabled\":false,\"isFilterSelectionsButtonEnabled\":false,\"isFieldWellButtonEnabled\":false,\"isApplyAllButtonEnabled\":false},\"linguisticSchemaSyncVersion\":2,\"settings\":{\"useNewFilterPaneExperience\":true,\"allowChangeFilterTypes\":true,\"useStylableVisualContainerHeader\":true,\"queryLimitOption\":6,\"exportDataMode\":1,\"useDefaultAggregateDisplayName\":true},\"objects\":{\"section\":[{\"properties\":{\"verticalAlignment\":{\"expr\":{\"Literal\":{\"Value\":\"'Top'\"}}}}}],\"outspacePane\":[{\"properties\":{\"expanded\":{\"expr\":{\"Literal\":{\"Value\":\"false\"}}}}}]}}",
+  "layoutOptimization": 0,
+  "resourcePackages": [
+    {
+      "resourcePackage": {
+        "disabled": false,
+        "items": [
+          {
+            "name": "CY24SU02",
+            "path": "BaseThemes/CY24SU02.json",
+            "type": 202
+          }
+        ],
+        "name": "SharedResources",
+        "type": 2
+      }
+    }
+  ],
+  "sections": [
+    {
+      "config": "{\"relationships\":[{\"source\":\"b0134db7ba766585c511\",\"target\":\"1db6a3905520a0761bc1\",\"type\":1},{\"source\":\"0a9e6039d2c16109c62b\",\"target\":\"1c849a1edd9bceb4013b\",\"type\":3},{\"source\":\"0a9e6039d2c16109c62b\",\"target\":\"b0134db7ba766585c511\",\"type\":3},{\"source\":\"0a9e6039d2c16109c62b\",\"target\":\"dd21c100cd05467d9208\",\"type\":3}]}",
+      "displayName": "EDA",
+      "displayOption": 2,
+      "filters": "[]",
+      "height": 2000.00,
+      "name": "ReportSection",
+      "ordinal": 1,
+      "visualContainers": [
+        {
+          "config": "{\"name\":\"0a9e6039d2c16109c62b\",\"layouts\":[{\"id\":0,\"position\":{\"x\":960.219629375429,\"y\":719.5058339052849,\"z\":1003,\"width\":319.78037062457105,\"height\":502.5120109814688,\"tabOrder\":1003}}],\"singleVisual\":{\"visualType\":\"advancedSlicerVisual\",\"projections\":{\"Values\":[{\"queryRef\":\"SeriesData.year\"}]},\"prototypeQuery\":{\"Version\":2,\"From\":[{\"Name\":\"s\",\"Entity\":\"SeriesData\",\"Type\":0}],\"Select\":[{\"Column\":{\"Expression\":{\"SourceRef\":{\"Source\":\"s\"}},\"Property\":\"year\"},\"Name\":\"SeriesData.year\",\"NativeReferenceName\":\"Sum of year\"}]},\"drillFilterOtherVisuals\":true,\"hasDefaultSort\":true,\"objects\":{\"general\":[{\"properties\":{\"filter\":{\"filter\":{\"Version\":2,\"From\":[{\"Name\":\"s\",\"Entity\":\"SeriesData\",\"Type\":0}],\"Where\":[{\"Condition\":{\"In\":{\"Expressions\":[{\"Column\":{\"Expression\":{\"SourceRef\":{\"Source\":\"s\"}},\"Property\":\"year\"}}],\"Values\":[[{\"Literal\":{\"Value\":\"2022L\"}}]]}}}]}}}}]}}}",
+          "filters": "[]",
+          "height": 502.51,
+          "width": 319.78,
+          "x": 960.22,
+          "y": 719.51,
+          "z": 1003.00
+        },
+        {
+          "config": "{\"name\":\"1c849a1edd9bceb4013b\",\"layouts\":[{\"id\":0,\"position\":{\"x\":0,\"y\":216.99382292381608,\"z\":0,\"width\":1280,\"height\":501.63349347975293,\"tabOrder\":1000}}],\"singleVisual\":{\"visualType\":\"lineChart\",\"projections\":{\"Category\":[{\"queryRef\":\"SeriesData.year\",\"active\":true}],\"Y\":[{\"queryRef\":\"Sum(SeriesData.value)\"}],\"Series\":[{\"queryRef\":\"SeriesData.Country.Name\"}]},\"prototypeQuery\":{\"Version\":2,\"From\":[{\"Name\":\"s\",\"Entity\":\"SeriesData\",\"Type\":0}],\"Select\":[{\"Column\":{\"Expression\":{\"SourceRef\":{\"Source\":\"s\"}},\"Property\":\"year\"},\"Name\":\"SeriesData.year\",\"NativeReferenceName\":\"year\"},{\"Aggregation\":{\"Expression\":{\"Column\":{\"Expression\":{\"SourceRef\":{\"Source\":\"s\"}},\"Property\":\"value\"}},\"Function\":0},\"Name\":\"Sum(SeriesData.value)\",\"NativeReferenceName\":\"Sum of value\"},{\"Column\":{\"Expression\":{\"SourceRef\":{\"Source\":\"s\"}},\"Property\":\"Country.Name\"},\"Name\":\"SeriesData.Country.Name\",\"NativeReferenceName\":\"Country.Name\"}],\"OrderBy\":[{\"Direction\":2,\"Expression\":{\"Aggregation\":{\"Expression\":{\"Column\":{\"Expression\":{\"SourceRef\":{\"Source\":\"s\"}},\"Property\":\"value\"}},\"Function\":0}}}]},\"drillFilterOtherVisuals\":true,\"hasDefaultSort\":true,\"objects\":{\"legend\":[{\"properties\":{\"position\":{\"expr\":{\"Literal\":{\"Value\":\"'RightCenter'\"}}}}}]},\"vcObjects\":{\"title\":[{\"properties\":{\"text\":{\"expr\":{\"Literal\":{\"Value\":\"'Indicator Value by Year and Country'\"}}}}}]}}}",
+          "filters": "[]",
+          "height": 501.63,
+          "width": 1280.00,
+          "x": 0.00,
+          "y": 216.99,
+          "z": 0.00
+        },
+        {
+          "config": "{\"name\":\"1db6a3905520a0761bc1\",\"layouts\":[{\"id\":0,\"position\":{\"x\":0,\"y\":719.5058339052849,\"z\":1001,\"width\":960.219629375429,\"height\":501.63349347975293,\"tabOrder\":1001}}],\"singleVisual\":{\"visualType\":\"clusteredColumnChart\",\"projections\":{\"Y\":[{\"queryRef\":\"Sum(SeriesData.value)\"}],\"Category\":[{\"queryRef\":\"SeriesData.Country.Name\",\"active\":true}]},\"prototypeQuery\":{\"Version\":2,\"From\":[{\"Name\":\"s\",\"Entity\":\"SeriesData\",\"Type\":0}],\"Select\":[{\"Aggregation\":{\"Expression\":{\"Column\":{\"Expression\":{\"SourceRef\":{\"Source\":\"s\"}},\"Property\":\"value\"}},\"Function\":0},\"Name\":\"Sum(SeriesData.value)\",\"NativeReferenceName\":\"Sum of value\"},{\"Column\":{\"Expression\":{\"SourceRef\":{\"Source\":\"s\"}},\"Property\":\"Country.Name\"},\"Name\":\"SeriesData.Country.Name\",\"NativeReferenceName\":\"Country.Name\"}],\"OrderBy\":[{\"Direction\":2,\"Expression\":{\"Aggregation\":{\"Expression\":{\"Column\":{\"Expression\":{\"SourceRef\":{\"Source\":\"s\"}},\"Property\":\"value\"}},\"Function\":0}}}]},\"drillFilterOtherVisuals\":true,\"hasDefaultSort\":true,\"objects\":{\"labels\":[{\"properties\":{\"show\":{\"expr\":{\"Literal\":{\"Value\":\"true\"}}}}}]},\"vcObjects\":{\"title\":[{\"properties\":{\"text\":{\"expr\":{\"Literal\":{\"Value\":\"'Indicator Value by Country for Selected Year'\"}}}}}]}}}",
+          "filters": "[]",
+          "height": 501.63,
+          "width": 960.22,
+          "x": 0.00,
+          "y": 719.51,
+          "z": 1001.00
+        },
+        {
+          "config": "{\"name\":\"48a4cd44c807cac747e0\",\"layouts\":[{\"id\":0,\"position\":{\"x\":0,\"y\":1231.6815374056282,\"z\":1004,\"width\":1280,\"height\":191.5168153740563,\"tabOrder\":1004}}],\"singleVisual\":{\"visualType\":\"tableEx\",\"projections\":{\"Values\":[{\"queryRef\":\"Series.Long.definition\"}]},\"prototypeQuery\":{\"Version\":2,\"From\":[{\"Name\":\"s\",\"Entity\":\"Series\",\"Type\":0}],\"Select\":[{\"Column\":{\"Expression\":{\"SourceRef\":{\"Source\":\"s\"}},\"Property\":\"Long.definition\"},\"Name\":\"Series.Long.definition\",\"NativeReferenceName\":\"Long.definition\"}]},\"drillFilterOtherVisuals\":true}}",
+          "filters": "[]",
+          "height": 191.52,
+          "width": 1280.00,
+          "x": 0.00,
+          "y": 1231.68,
+          "z": 1004.00
+        },
+        {
+          "config": "{\"name\":\"b0134db7ba766585c511\",\"layouts\":[{\"id\":0,\"position\":{\"x\":640.439258750858,\"y\":0,\"z\":1000,\"width\":639.5607412491421,\"height\":217.87234042553195,\"tabOrder\":0}}],\"singleVisual\":{\"visualType\":\"advancedSlicerVisual\",\"projections\":{\"Values\":[{\"queryRef\":\"SeriesData.Indicator.Name\"}]},\"prototypeQuery\":{\"Version\":2,\"From\":[{\"Name\":\"s\",\"Entity\":\"SeriesData\",\"Type\":0}],\"Select\":[{\"Column\":{\"Expression\":{\"SourceRef\":{\"Source\":\"s\"}},\"Property\":\"Indicator.Name\"},\"Name\":\"SeriesData.Indicator.Name\",\"NativeReferenceName\":\"Indicator.Name\"}]},\"drillFilterOtherVisuals\":true,\"objects\":{\"data\":[{\"properties\":{}}],\"general\":[{\"properties\":{\"selfFilterEnabled\":{\"expr\":{\"Literal\":{\"Value\":\"true\"}}},\"selfFilter\":{\"filter\":{\"Version\":2,\"From\":[{\"Name\":\"s\",\"Entity\":\"SeriesData\",\"Type\":0}],\"Where\":[{\"Condition\":{\"Contains\":{\"Left\":{\"Column\":{\"Expression\":{\"SourceRef\":{\"Source\":\"s\"}},\"Property\":\"Indicator.Name\"}},\"Right\":{\"Literal\":{\"Value\":\"'per capita'\"}}}},\"Annotations\":{\"PowerBI.MParameterBehavior\":1}}]}}}}],\"selection\":[{\"properties\":{\"strictSingleSelect\":{\"expr\":{\"Literal\":{\"Value\":\"false\"}}}}}],\"layout\":[{\"properties\":{\"orientation\":{\"expr\":{\"Literal\":{\"Value\":\"1D\"}}}}}]}}}",
+          "filters": "[]",
+          "height": 217.87,
+          "width": 639.56,
+          "x": 640.44,
+          "y": 0.00,
+          "z": 1000.00
+        },
+        {
+          "config": "{\"name\":\"dd21c100cd05467d9208\",\"layouts\":[{\"id\":0,\"position\":{\"x\":0,\"y\":0,\"width\":640,\"height\":217,\"z\":1002,\"tabOrder\":1002}}],\"singleVisual\":{\"visualType\":\"advancedSlicerVisual\",\"projections\":{\"Values\":[{\"queryRef\":\"Series.Topic\"}]},\"prototypeQuery\":{\"Version\":2,\"From\":[{\"Name\":\"s\",\"Entity\":\"Series\",\"Type\":0}],\"Select\":[{\"Column\":{\"Expression\":{\"SourceRef\":{\"Source\":\"s\"}},\"Property\":\"Topic\"},\"Name\":\"Series.Topic\",\"NativeReferenceName\":\"Topic\"}]},\"drillFilterOtherVisuals\":true,\"objects\":{\"data\":[{\"properties\":{}}],\"general\":[{\"properties\":{\"selfFilterEnabled\":{\"expr\":{\"Literal\":{\"Value\":\"true\"}}}}}],\"layout\":[{\"properties\":{\"orientation\":{\"expr\":{\"Literal\":{\"Value\":\"1D\"}}}}}]}}}",
+          "filters": "[]",
+          "height": 217.00,
+          "width": 640.00,
+          "x": 0.00,
+          "y": 0.00,
+          "z": 1002.00
+        }
+      ],
+      "width": 1280.00
+    },
+    {
+      "config": "{}",
+      "displayName": "Economic Output",
+      "displayOption": 1,
+      "filters": "[]",
+      "height": 720.00,
+      "name": "ReportSectiona04677365ce020b8679b",
+      "ordinal": 2,
+      "visualContainers": [],
+      "width": 1280.00
+    },
+    {
+      "config": "{}",
+      "displayName": "Inequality",
+      "displayOption": 1,
+      "filters": "[]",
+      "height": 720.00,
+      "name": "ReportSectionb76e0b72b332080596b4",
+      "ordinal": 4,
+      "visualContainers": [],
+      "width": 1280.00
+    },
+    {
+      "config": "{}",
+      "displayName": "Landing Page",
+      "displayOption": 1,
+      "filters": "[]",
+      "height": 720.00,
+      "name": "ReportSectionc5cfb44300c0e3821001",
+      "visualContainers": [
+        {
+          "config": "{\"name\":\"01973b019cb4bab9e820\",\"layouts\":[{\"id\":0,\"position\":{\"x\":54.56716417910448,\"y\":442.6865671641791,\"z\":5,\"width\":265.07462686567163,\"height\":40.298507462686565}}],\"singleVisual\":{\"visualType\":\"actionButton\",\"drillFilterOtherVisuals\":true,\"objects\":{\"icon\":[{\"properties\":{\"shapeType\":{\"expr\":{\"Literal\":{\"Value\":\"'blank'\"}}}},\"selector\":{\"id\":\"default\"}}],\"text\":[{\"properties\":{\"show\":{\"expr\":{\"Literal\":{\"Value\":\"true\"}}}}},{\"properties\":{\"text\":{\"expr\":{\"Literal\":{\"Value\":\"'Development'\"}}}},\"selector\":{\"id\":\"default\"}}]},\"vcObjects\":{\"visualLink\":[{\"properties\":{\"show\":{\"expr\":{\"Literal\":{\"Value\":\"true\"}}},\"type\":{\"expr\":{\"Literal\":{\"Value\":\"'PageNavigation'\"}}},\"navigationSection\":{\"expr\":{\"Literal\":{\"Value\":\"'ReportSectione8e018ccb2c1a587167c'\"}}}}}]}},\"howCreated\":\"InsertVisualButton\"}",
+          "filters": "[]",
+          "height": 40.30,
+          "width": 265.07,
+          "x": 54.57,
+          "y": 442.69,
+          "z": 5.00
+        },
+        {
+          "config": "{\"name\":\"2a251765e6ab54255ab3\",\"layouts\":[{\"id\":0,\"position\":{\"x\":9.850746268656716,\"y\":27.761194029850746,\"z\":2,\"width\":732.5373134328358,\"height\":299.1044776119403,\"tabOrder\":2}}],\"singleVisual\":{\"visualType\":\"textbox\",\"drillFilterOtherVisuals\":true,\"objects\":{\"general\":[{\"properties\":{\"paragraphs\":[{\"textRuns\":[{\"value\":\"World Development Indicators Data Exploration \",\"textStyle\":{\"fontSize\":\"36pt\"}}]},{\"textRuns\":[{\"value\":\"\"}]},{\"textRuns\":[{\"value\":\"This report explores key indicators collected by the the World Bank to track development and other economic data globally. The data used in this report is sourced using an R script and the WDI package in R. As the data set is large only 11 countries were selected to be analyzed. \",\"textStyle\":{\"fontSize\":\"12pt\"}}]},{\"textRuns\":[{\"value\":\"\"}]},{\"textRuns\":[{\"value\":\"The report consists of the following pages: \",\"textStyle\":{\"fontSize\":\"12pt\"}}]},{\"textRuns\":[{\"value\":\"\"}]},{\"textRuns\":[{\"value\":\" \",\"textStyle\":{\"fontSize\":\"12pt\"}},{\"value\":\" \"}]}]}}]}}}",
+          "filters": "[]",
+          "height": 299.10,
+          "width": 732.54,
+          "x": 9.85,
+          "y": 27.76,
+          "z": 2.00
+        },
+        {
+          "config": "{\"name\":\"66157fead3a16bc09e06\",\"layouts\":[{\"id\":0,\"position\":{\"x\":54.56716417910448,\"y\":504.179104477612,\"z\":6,\"width\":265.07462686567163,\"height\":40.298507462686565}}],\"singleVisual\":{\"visualType\":\"actionButton\",\"drillFilterOtherVisuals\":true,\"objects\":{\"icon\":[{\"properties\":{\"shapeType\":{\"expr\":{\"Literal\":{\"Value\":\"'blank'\"}}}},\"selector\":{\"id\":\"default\"}}],\"text\":[{\"properties\":{\"show\":{\"expr\":{\"Literal\":{\"Value\":\"true\"}}}}},{\"properties\":{\"text\":{\"expr\":{\"Literal\":{\"Value\":\"'Inequality '\"}}}},\"selector\":{\"id\":\"default\"}}]},\"vcObjects\":{\"visualLink\":[{\"properties\":{\"show\":{\"expr\":{\"Literal\":{\"Value\":\"true\"}}},\"type\":{\"expr\":{\"Literal\":{\"Value\":\"'PageNavigation'\"}}},\"navigationSection\":{\"expr\":{\"Literal\":{\"Value\":\"'ReportSectionb76e0b72b332080596b4'\"}}}}}]}},\"howCreated\":\"InsertVisualButton\"}",
+          "filters": "[]",
+          "height": 40.30,
+          "width": 265.07,
+          "x": 54.57,
+          "y": 504.18,
+          "z": 6.00
+        },
+        {
+          "config": "{\"name\":\"8b5ba38126b53d17e95c\",\"layouts\":[{\"id\":0,\"position\":{\"x\":54.56716417910448,\"y\":381.19402985074623,\"z\":4,\"width\":265.07462686567163,\"height\":40.298507462686565}}],\"singleVisual\":{\"visualType\":\"actionButton\",\"drillFilterOtherVisuals\":true,\"objects\":{\"icon\":[{\"properties\":{\"shapeType\":{\"expr\":{\"Literal\":{\"Value\":\"'blank'\"}}}},\"selector\":{\"id\":\"default\"}}],\"text\":[{\"properties\":{\"show\":{\"expr\":{\"Literal\":{\"Value\":\"true\"}}}}},{\"properties\":{\"text\":{\"expr\":{\"Literal\":{\"Value\":\"'Economic Output'\"}}}},\"selector\":{\"id\":\"default\"}}]},\"vcObjects\":{\"visualLink\":[{\"properties\":{\"show\":{\"expr\":{\"Literal\":{\"Value\":\"true\"}}},\"type\":{\"expr\":{\"Literal\":{\"Value\":\"'PageNavigation'\"}}},\"navigationSection\":{\"expr\":{\"Literal\":{\"Value\":\"'ReportSectiona04677365ce020b8679b'\"}}}}}]}},\"howCreated\":\"InsertVisualButton\"}",
+          "filters": "[]",
+          "height": 40.30,
+          "width": 265.07,
+          "x": 54.57,
+          "y": 381.19,
+          "z": 4.00
+        },
+        {
+          "config": "{\"name\":\"92b375291eb806beb1c7\",\"layouts\":[{\"id\":0,\"position\":{\"x\":953.7313432835821,\"y\":17.01492537313433,\"z\":9,\"width\":280.2985074626866,\"height\":689.5522388059701}}],\"singleVisualGroup\":{\"displayName\":\"Group 1\",\"groupMode\":0}}",
+          "height": 689.55,
+          "width": 280.30,
+          "x": 953.73,
+          "y": 17.01,
+          "z": 9.00
+        },
+        {
+          "config": "{\"name\":\"9f939cd02ce304336cc9\",\"layouts\":[{\"id\":0,\"position\":{\"x\":55.417910447761194,\"y\":319.7014925373134,\"z\":3,\"width\":265.07462686567163,\"height\":40.298507462686565}}],\"singleVisual\":{\"visualType\":\"actionButton\",\"drillFilterOtherVisuals\":true,\"objects\":{\"icon\":[{\"properties\":{\"shapeType\":{\"expr\":{\"Literal\":{\"Value\":\"'blank'\"}}}},\"selector\":{\"id\":\"default\"}}],\"text\":[{\"properties\":{\"show\":{\"expr\":{\"Literal\":{\"Value\":\"true\"}}}}},{\"properties\":{\"text\":{\"expr\":{\"Literal\":{\"Value\":\"'Exploratory Data Analysis '\"}}}},\"selector\":{\"id\":\"default\"}}]},\"vcObjects\":{\"visualLink\":[{\"properties\":{\"show\":{\"expr\":{\"Literal\":{\"Value\":\"true\"}}},\"type\":{\"expr\":{\"Literal\":{\"Value\":\"'PageNavigation'\"}}},\"navigationSection\":{\"expr\":{\"Literal\":{\"Value\":\"'ReportSection'\"}}}}}]}},\"howCreated\":\"InsertVisualButton\"}",
+          "filters": "[]",
+          "height": 40.30,
+          "width": 265.07,
+          "x": 55.42,
+          "y": 319.70,
+          "z": 3.00
+        },
+        {
+          "config": "{\"name\":\"a7217870540d572ece88\",\"layouts\":[{\"id\":0,\"position\":{\"x\":0,\"y\":173.43283582089552,\"z\":1,\"width\":280.2985074626866,\"height\":170,\"tabOrder\":1}}],\"singleVisual\":{\"visualType\":\"card\",\"projections\":{\"Values\":[{\"queryRef\":\"Min(SeriesData.Indicator.Code)\"}]},\"prototypeQuery\":{\"Version\":2,\"From\":[{\"Name\":\"s\",\"Entity\":\"SeriesData\",\"Type\":0}],\"Select\":[{\"Aggregation\":{\"Expression\":{\"Column\":{\"Expression\":{\"SourceRef\":{\"Source\":\"s\"}},\"Property\":\"Indicator.Code\"}},\"Function\":2},\"Name\":\"Min(SeriesData.Indicator.Code)\",\"NativeReferenceName\":\"No. of Indicators\"}],\"OrderBy\":[{\"Direction\":2,\"Expression\":{\"Aggregation\":{\"Expression\":{\"Column\":{\"Expression\":{\"SourceRef\":{\"Source\":\"s\"}},\"Property\":\"Indicator.Code\"}},\"Function\":2}}}]},\"columnProperties\":{\"Min(SeriesData.Indicator.Code)\":{\"displayName\":\"No. of Indicators\"}},\"drillFilterOtherVisuals\":true,\"hasDefaultSort\":true},\"parentGroupName\":\"92b375291eb806beb1c7\"}",
+          "filters": "[]",
+          "height": 170.00,
+          "width": 280.30,
+          "x": 0.00,
+          "y": 173.43,
+          "z": 1.00
+        },
+        {
+          "config": "{\"name\":\"b36f8df564c0b0be96d0\",\"layouts\":[{\"id\":0,\"position\":{\"x\":0,\"y\":0,\"z\":0,\"width\":280.2985074626866,\"height\":170,\"tabOrder\":0}}],\"singleVisual\":{\"visualType\":\"card\",\"projections\":{\"Values\":[{\"queryRef\":\"Min(Country.Long.Name)\"}]},\"prototypeQuery\":{\"Version\":2,\"From\":[{\"Name\":\"c\",\"Entity\":\"Country\",\"Type\":0}],\"Select\":[{\"Aggregation\":{\"Expression\":{\"Column\":{\"Expression\":{\"SourceRef\":{\"Source\":\"c\"}},\"Property\":\"Long.Name\"}},\"Function\":2},\"Name\":\"Min(Country.Long.Name)\",\"NativeReferenceName\":\"No. of Countries\"}],\"OrderBy\":[{\"Direction\":2,\"Expression\":{\"Aggregation\":{\"Expression\":{\"Column\":{\"Expression\":{\"SourceRef\":{\"Source\":\"c\"}},\"Property\":\"Long.Name\"}},\"Function\":2}}}]},\"columnProperties\":{\"Min(Country.Long.Name)\":{\"displayName\":\"No. of Countries\"}},\"drillFilterOtherVisuals\":true,\"hasDefaultSort\":true,\"vcObjects\":{\"visualHeader\":[{\"properties\":{\"show\":{\"expr\":{\"Literal\":{\"Value\":\"true\"}}}}}]}},\"parentGroupName\":\"92b375291eb806beb1c7\"}",
+          "filters": "[]",
+          "height": 170.00,
+          "width": 280.30,
+          "x": 0.00,
+          "y": 0.00,
+          "z": 0.00
+        },
+        {
+          "config": "{\"name\":\"ee57cc4a9a605b6ec0cb\",\"layouts\":[{\"id\":0,\"position\":{\"x\":0,\"y\":346.86567164179104,\"z\":7,\"width\":280.2985074626866,\"height\":170,\"tabOrder\":3}}],\"singleVisual\":{\"visualType\":\"card\",\"projections\":{\"Values\":[{\"queryRef\":\"Sum(SeriesData.year)\"}]},\"prototypeQuery\":{\"Version\":2,\"From\":[{\"Name\":\"s\",\"Entity\":\"SeriesData\",\"Type\":0}],\"Select\":[{\"Aggregation\":{\"Expression\":{\"Column\":{\"Expression\":{\"SourceRef\":{\"Source\":\"s\"}},\"Property\":\"year\"}},\"Function\":4},\"Name\":\"Sum(SeriesData.year)\",\"NativeReferenceName\":\"Max Year\"}],\"OrderBy\":[{\"Direction\":2,\"Expression\":{\"Aggregation\":{\"Expression\":{\"Column\":{\"Expression\":{\"SourceRef\":{\"Source\":\"s\"}},\"Property\":\"year\"}},\"Function\":4}}}]},\"columnProperties\":{\"Sum(SeriesData.year)\":{\"displayName\":\"Max Year\"}},\"drillFilterOtherVisuals\":true,\"hasDefaultSort\":true},\"parentGroupName\":\"92b375291eb806beb1c7\"}",
+          "filters": "[]",
+          "height": 170.00,
+          "width": 280.30,
+          "x": 0.00,
+          "y": 346.87,
+          "z": 7.00
+        },
+        {
+          "config": "{\"name\":\"ef0cab666d0ca5be2150\",\"layouts\":[{\"id\":0,\"position\":{\"x\":0,\"y\":520.2985074626865,\"z\":8,\"width\":280.2985074626866,\"height\":170,\"tabOrder\":4}}],\"singleVisual\":{\"visualType\":\"card\",\"projections\":{\"Values\":[{\"queryRef\":\"Sum(SeriesData.year)\"}]},\"prototypeQuery\":{\"Version\":2,\"From\":[{\"Name\":\"s\",\"Entity\":\"SeriesData\",\"Type\":0}],\"Select\":[{\"Aggregation\":{\"Expression\":{\"Column\":{\"Expression\":{\"SourceRef\":{\"Source\":\"s\"}},\"Property\":\"year\"}},\"Function\":3},\"Name\":\"Sum(SeriesData.year)\",\"NativeReferenceName\":\"Min Year\"}],\"OrderBy\":[{\"Direction\":2,\"Expression\":{\"Aggregation\":{\"Expression\":{\"Column\":{\"Expression\":{\"SourceRef\":{\"Source\":\"s\"}},\"Property\":\"year\"}},\"Function\":3}}}]},\"columnProperties\":{\"Sum(SeriesData.year)\":{\"displayName\":\"Min Year\"}},\"drillFilterOtherVisuals\":true,\"hasDefaultSort\":true},\"parentGroupName\":\"92b375291eb806beb1c7\"}",
+          "filters": "[]",
+          "height": 170.00,
+          "width": 280.30,
+          "x": 0.00,
+          "y": 520.30,
+          "z": 8.00
+        }
+      ],
+      "width": 1280.00
+    },
+    {
+      "config": "{}",
+      "displayName": "Development",
+      "displayOption": 1,
+      "filters": "[]",
+      "height": 720.00,
+      "name": "ReportSectione8e018ccb2c1a587167c",
+      "ordinal": 3,
+      "visualContainers": [],
+      "width": 1280.00
+    }
+  ]
+}

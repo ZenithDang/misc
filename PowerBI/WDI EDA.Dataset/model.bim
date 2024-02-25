@@ -1,0 +1,1413 @@
+{
+  "compatibilityLevel": 1550,
+  "model": {
+    "annotations": [
+      {
+        "name": "PBI_ProTooling",
+        "value": "[\"DevMode\"]"
+      },
+      {
+        "name": "PBIDesktopVersion",
+        "value": "2.126.927.0 (24.02)"
+      },
+      {
+        "name": "PBI_QueryOrder",
+        "value": "[\"Country\",\"CountrySerices\",\"FootNote\",\"Series\",\"SeriesData\",\"SeriesTime\"]"
+      },
+      {
+        "name": "__PBI_TimeIntelligenceEnabled",
+        "value": "1"
+      }
+    ],
+    "culture": "en-AU",
+    "cultures": [
+      {
+        "name": "en-AU",
+        "linguisticMetadata": {
+          "content": {
+            "DynamicImprovement": "HighConfidence",
+            "Language": "en-US",
+            "Version": "1.0.0"
+          },
+          "contentType": "json"
+        }
+      }
+    ],
+    "dataAccessOptions": {
+      "legacyRedirects": true,
+      "returnErrorValuesAsNull": true
+    },
+    "defaultPowerBIDataSourceVersion": "powerBI_V3",
+    "relationships": [
+      {
+        "name": "40519887-23bd-42d6-b675-3448c652d02f",
+        "fromColumn": "CountryCode",
+        "fromTable": "CountrySerices",
+        "toColumn": "Country.Code",
+        "toTable": "Country"
+      },
+      {
+        "name": "c3b460f7-a51a-4ef2-980a-d6e655daa774",
+        "fromColumn": "CountryCode",
+        "fromTable": "FootNote",
+        "toColumn": "Country.Code",
+        "toTable": "Country"
+      },
+      {
+        "name": "a2b53dd7-281c-4e8c-afd2-763cb5d65c77",
+        "fromColumn": "Country.Code",
+        "fromTable": "SeriesData",
+        "toColumn": "Country.Code",
+        "toTable": "Country"
+      },
+      {
+        "name": "595c31ef-5900-4a80-bb16-91533ae37570",
+        "fromColumn": "SeriesCode",
+        "fromTable": "CountrySerices",
+        "toColumn": "Series.Code",
+        "toTable": "Series"
+      },
+      {
+        "name": "d1b831e8-3ef4-467d-b038-d7c0fa68bbf1",
+        "fromColumn": "SeriesCode",
+        "fromTable": "FootNote",
+        "toColumn": "Series.Code",
+        "toTable": "Series"
+      },
+      {
+        "name": "8f651a73-1458-4fb7-8265-fb5581acc266",
+        "fromColumn": "SeriesCode",
+        "fromTable": "SeriesTime",
+        "toColumn": "Series.Code",
+        "toTable": "Series"
+      },
+      {
+        "name": "34c6894e-62b8-4126-b7f1-c4b42863d0f1",
+        "crossFilteringBehavior": "bothDirections",
+        "fromColumn": "Indicator.Name",
+        "fromTable": "SeriesData",
+        "toColumn": "Indicator.Name",
+        "toTable": "Series"
+      }
+    ],
+    "sourceQueryCulture": "en-AU",
+    "tables": [
+      {
+        "name": "Country",
+        "annotations": [
+          {
+            "name": "PBI_ResultType",
+            "value": "Exception"
+          }
+        ],
+        "columns": [
+          {
+            "name": "Country.Code",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              }
+            ],
+            "dataType": "string",
+            "lineageTag": "e67e42e4-5775-4cbb-881a-a5a136842ae3",
+            "sourceColumn": "Country.Code",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "Short.Name",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              }
+            ],
+            "dataType": "string",
+            "lineageTag": "597b00d0-6aaf-4ab7-b89e-0e0693393082",
+            "sourceColumn": "Short.Name",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "Table.Name",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              }
+            ],
+            "dataType": "string",
+            "lineageTag": "f0575a06-785a-4d2f-8cd5-bdee870b06b8",
+            "sourceColumn": "Table.Name",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "Long.Name",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              }
+            ],
+            "dataType": "string",
+            "lineageTag": "1f3b95f2-fdd5-4d3f-8f32-1d225ea19810",
+            "sourceColumn": "Long.Name",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "X2.alpha.code",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              }
+            ],
+            "dataType": "string",
+            "lineageTag": "cd08f1c0-8228-4c96-b98f-32e3283c7cc7",
+            "sourceColumn": "X2.alpha.code",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "Currency.Unit",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              }
+            ],
+            "dataType": "string",
+            "lineageTag": "08061b2f-e5a3-4315-896f-9f030b84ee67",
+            "sourceColumn": "Currency.Unit",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "Special.Notes",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              }
+            ],
+            "dataType": "string",
+            "lineageTag": "12f80360-b574-4ae2-8d5c-33b1ff0f6aee",
+            "sourceColumn": "Special.Notes",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "Region",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              }
+            ],
+            "dataType": "string",
+            "lineageTag": "b032b602-3aef-47e1-9252-a5c26ca765d4",
+            "sourceColumn": "Region",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "Income.Group",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              }
+            ],
+            "dataType": "string",
+            "lineageTag": "98068918-755f-4f04-ae4a-2878b0373385",
+            "sourceColumn": "Income.Group",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "WB.2.code",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              }
+            ],
+            "dataType": "string",
+            "lineageTag": "f288ad53-0524-4814-87ba-9cb4dcff0c10",
+            "sourceColumn": "WB.2.code",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "National.accounts.base.year",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              }
+            ],
+            "dataType": "string",
+            "lineageTag": "748e398e-a773-4853-9512-3827c02f985e",
+            "sourceColumn": "National.accounts.base.year",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "National.accounts.reference.year",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              }
+            ],
+            "dataType": "int64",
+            "formatString": "0",
+            "lineageTag": "153e38c3-55a0-4b3a-b0a2-207e7481ceda",
+            "sourceColumn": "National.accounts.reference.year",
+            "summarizeBy": "sum"
+          },
+          {
+            "name": "SNA.price.valuation",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              }
+            ],
+            "dataType": "string",
+            "lineageTag": "cc27fddb-df76-48ce-8c19-51e77d9ed5ac",
+            "sourceColumn": "SNA.price.valuation",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "Lending.category",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              }
+            ],
+            "dataType": "string",
+            "lineageTag": "a492b345-300d-46bb-828f-8e0b86bb5cfe",
+            "sourceColumn": "Lending.category",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "Other.groups",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              }
+            ],
+            "dataType": "string",
+            "lineageTag": "6e68ef6c-b735-4305-96a4-14e2b8139fb2",
+            "sourceColumn": "Other.groups",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "System.of.National.Accounts",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              }
+            ],
+            "dataType": "string",
+            "lineageTag": "b9cb1d92-de1c-42e4-840e-b111c862243b",
+            "sourceColumn": "System.of.National.Accounts",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "Alternative.conversion.factor",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              }
+            ],
+            "dataType": "boolean",
+            "formatString": "\"TRUE\";\"TRUE\";\"FALSE\"",
+            "lineageTag": "e54955d4-1bb9-40fe-a44a-54b537eab13c",
+            "sourceColumn": "Alternative.conversion.factor",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "PPP.survey.year",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              }
+            ],
+            "dataType": "boolean",
+            "formatString": "\"TRUE\";\"TRUE\";\"FALSE\"",
+            "lineageTag": "6bd5162d-3d68-4799-9932-49aa77ac2e23",
+            "sourceColumn": "PPP.survey.year",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "Balance.of.Payments.Manual.in.use",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              }
+            ],
+            "dataType": "string",
+            "lineageTag": "3a9a3329-fe8f-46b2-bd1e-452e0bfa0ed1",
+            "sourceColumn": "Balance.of.Payments.Manual.in.use",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "External.debt.Reporting.status",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              }
+            ],
+            "dataType": "string",
+            "lineageTag": "b35a1d70-68e4-4773-a8bb-f20cb01249a3",
+            "sourceColumn": "External.debt.Reporting.status",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "System.of.trade",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              }
+            ],
+            "dataType": "string",
+            "lineageTag": "4ec8c407-ef7f-48a0-a26f-04ac674d7506",
+            "sourceColumn": "System.of.trade",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "Government.Accounting.concept",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              }
+            ],
+            "dataType": "string",
+            "lineageTag": "8185f5a2-c840-4128-a4b4-d5ea02216a54",
+            "sourceColumn": "Government.Accounting.concept",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "IMF.data.dissemination.standard",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              }
+            ],
+            "dataType": "string",
+            "lineageTag": "43b90fbd-90c0-460b-a240-bab3fce6cb81",
+            "sourceColumn": "IMF.data.dissemination.standard",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "Latest.population.census",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              }
+            ],
+            "dataType": "string",
+            "lineageTag": "d05a76fe-4b72-462a-a123-3c2ef5bd7c67",
+            "sourceColumn": "Latest.population.census",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "Latest.household.survey",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              }
+            ],
+            "dataType": "string",
+            "lineageTag": "455801a6-e844-4b74-b3b8-32e5cf44fda3",
+            "sourceColumn": "Latest.household.survey",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "Source.of.most.recent.Income.and.expenditure.data",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              }
+            ],
+            "dataType": "string",
+            "lineageTag": "b0218762-8c2f-4720-a9a6-21af181d9583",
+            "sourceColumn": "Source.of.most.recent.Income.and.expenditure.data",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "Vital.registration.complete",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              }
+            ],
+            "dataType": "string",
+            "lineageTag": "42716795-5afa-4e97-8a82-fcd8032e45d4",
+            "sourceColumn": "Vital.registration.complete",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "Latest.agricultural.census",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              }
+            ],
+            "dataType": "string",
+            "lineageTag": "36c9c276-1163-475f-ae87-0b714b07e388",
+            "sourceColumn": "Latest.agricultural.census",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "Latest.industrial.data",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              }
+            ],
+            "dataType": "int64",
+            "formatString": "0",
+            "lineageTag": "806801b5-e369-4945-a6e9-cf103eb2e8de",
+            "sourceColumn": "Latest.industrial.data",
+            "summarizeBy": "sum"
+          },
+          {
+            "name": "Latest.trade.data",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              }
+            ],
+            "dataType": "int64",
+            "formatString": "0",
+            "lineageTag": "6283be9d-d776-4969-8eda-8f29fc38343f",
+            "sourceColumn": "Latest.trade.data",
+            "summarizeBy": "sum"
+          },
+          {
+            "name": "X",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              }
+            ],
+            "dataType": "boolean",
+            "formatString": "\"TRUE\";\"TRUE\";\"FALSE\"",
+            "lineageTag": "17918e8d-ef0e-4fd8-a918-7571ac155501",
+            "sourceColumn": "X",
+            "summarizeBy": "none"
+          }
+        ],
+        "lineageTag": "742b49aa-62c4-4edd-824e-2d60b748c47a",
+        "partitions": [
+          {
+            "name": "Country",
+            "mode": "import",
+            "source": {
+              "expression": [
+                "let",
+                "    Source = R.Execute(\"library(WDI)#(lf)library(dplyr)#(lf)#(lf)countries <-#(lf)  c(\"\"AUS\"\",#(lf)    \"\"ARG\"\",#(lf)    \"\"BRA\"\",#(lf)    \"\"CHL\"\",#(lf)    \"\"ESP\"\",#(lf)    \"\"GBR\"\",#(lf)    \"\"JPN\"\",#(lf)    \"\"NZL\"\",#(lf)    \"\"URY\"\",#(lf)    \"\"USA\"\",#(lf)    \"\"WLD\"\")#(lf)#(lf)RawData <- WDIbulk()#(lf)#(lf)SeriesTime <-  RawData$`Series-Time`#(lf)#(lf)CountrySerices <-#(lf)  RawData$`Country-Series` %>% filter(CountryCode %in% countries)#(lf)#(lf)Series <- RawData$Series#(lf)#(lf)Country <- RawData$Country  %>% filter(Country.Code %in% countries)#(lf)#(lf)FootNote <- RawData$FootNote %>% filter(CountryCode %in% countries)#(lf)#(lf)SeriesData <- RawData$Data %>% filter(Country.Code %in% countries)\"),",
+                "    Country1 = Source{[Name=\"Country\"]}[Value]",
+                "in",
+                "    Country1"
+              ],
+              "type": "m"
+            }
+          }
+        ]
+      },
+      {
+        "name": "DateTableTemplate_67aa99f6-3976-4531-acd0-29c354be7c0c",
+        "annotations": [
+          {
+            "name": "__PBI_TemplateDateTable",
+            "value": "true"
+          },
+          {
+            "name": "DefaultItem",
+            "value": "DateHierarchy"
+          }
+        ],
+        "columns": [
+          {
+            "name": "Date",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "User"
+              }
+            ],
+            "dataCategory": "PaddedDateTableDates",
+            "dataType": "dateTime",
+            "formatString": "General Date",
+            "isHidden": true,
+            "isNameInferred": true,
+            "lineageTag": "c94dcc4b-688d-4494-9e47-e35856e4dcaa",
+            "sourceColumn": "[Date]",
+            "summarizeBy": "none",
+            "type": "calculatedTableColumn"
+          },
+          {
+            "name": "Year",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "User"
+              },
+              {
+                "name": "TemplateId",
+                "value": "Year"
+              }
+            ],
+            "dataCategory": "Years",
+            "dataType": "int64",
+            "expression": "YEAR([Date])",
+            "formatString": "0",
+            "isHidden": true,
+            "lineageTag": "3f4bc94c-54e4-40db-ab6e-006bc35c8e7f",
+            "summarizeBy": "none",
+            "type": "calculated"
+          },
+          {
+            "name": "MonthNo",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "User"
+              },
+              {
+                "name": "TemplateId",
+                "value": "MonthNumber"
+              }
+            ],
+            "dataCategory": "MonthOfYear",
+            "dataType": "int64",
+            "expression": "MONTH([Date])",
+            "formatString": "0",
+            "isHidden": true,
+            "lineageTag": "121fe625-a85d-4b7a-852e-88a8a33b797d",
+            "summarizeBy": "none",
+            "type": "calculated"
+          },
+          {
+            "name": "Month",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "User"
+              },
+              {
+                "name": "TemplateId",
+                "value": "Month"
+              }
+            ],
+            "dataCategory": "Months",
+            "dataType": "string",
+            "expression": "FORMAT([Date], \"MMMM\")",
+            "isHidden": true,
+            "lineageTag": "9ac119f6-b69e-4c9a-9d43-94a46f75b1de",
+            "sortByColumn": "MonthNo",
+            "summarizeBy": "none",
+            "type": "calculated"
+          },
+          {
+            "name": "QuarterNo",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "User"
+              },
+              {
+                "name": "TemplateId",
+                "value": "QuarterNumber"
+              }
+            ],
+            "dataCategory": "QuarterOfYear",
+            "dataType": "int64",
+            "expression": "INT(([MonthNo] + 2) / 3)",
+            "formatString": "0",
+            "isHidden": true,
+            "lineageTag": "a122e078-5671-449b-aea2-28437eefd398",
+            "summarizeBy": "none",
+            "type": "calculated"
+          },
+          {
+            "name": "Quarter",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "User"
+              },
+              {
+                "name": "TemplateId",
+                "value": "Quarter"
+              }
+            ],
+            "dataCategory": "Quarters",
+            "dataType": "string",
+            "expression": "\"Qtr \" & [QuarterNo]",
+            "isHidden": true,
+            "lineageTag": "6edc3c1f-f107-40e4-ad28-cab0cadd7e72",
+            "sortByColumn": "QuarterNo",
+            "summarizeBy": "none",
+            "type": "calculated"
+          },
+          {
+            "name": "Day",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "User"
+              },
+              {
+                "name": "TemplateId",
+                "value": "Day"
+              }
+            ],
+            "dataCategory": "DayOfMonth",
+            "dataType": "int64",
+            "expression": "DAY([Date])",
+            "formatString": "0",
+            "isHidden": true,
+            "lineageTag": "a9f742fe-b3d1-4fad-a271-1eadf7a1bb79",
+            "summarizeBy": "none",
+            "type": "calculated"
+          }
+        ],
+        "hierarchies": [
+          {
+            "name": "Date Hierarchy",
+            "annotations": [
+              {
+                "name": "TemplateId",
+                "value": "DateHierarchy"
+              }
+            ],
+            "levels": [
+              {
+                "name": "Year",
+                "column": "Year",
+                "lineageTag": "64ebf377-a191-4224-8055-c849de498d98",
+                "ordinal": 0
+              },
+              {
+                "name": "Quarter",
+                "column": "Quarter",
+                "lineageTag": "dcd7d901-28ae-495a-a383-7aac768622ef",
+                "ordinal": 1
+              },
+              {
+                "name": "Month",
+                "column": "Month",
+                "lineageTag": "606208e3-5794-4116-9c86-6fc01476caac",
+                "ordinal": 2
+              },
+              {
+                "name": "Day",
+                "column": "Day",
+                "lineageTag": "087eb31b-1012-4708-bf8b-a00a64f67faa",
+                "ordinal": 3
+              }
+            ],
+            "lineageTag": "89adf323-35f2-4132-bb2d-702991863437"
+          }
+        ],
+        "isHidden": true,
+        "isPrivate": true,
+        "lineageTag": "8603812a-2ecb-43c5-bf10-1ab9d9d5371f",
+        "partitions": [
+          {
+            "name": "DateTableTemplate_67aa99f6-3976-4531-acd0-29c354be7c0c",
+            "mode": "import",
+            "source": {
+              "expression": "Calendar(Date(2015,1,1), Date(2015,1,1))",
+              "type": "calculated"
+            }
+          }
+        ]
+      },
+      {
+        "name": "CountrySerices",
+        "annotations": [
+          {
+            "name": "PBI_ResultType",
+            "value": "Exception"
+          }
+        ],
+        "columns": [
+          {
+            "name": "CountryCode",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              }
+            ],
+            "dataType": "string",
+            "lineageTag": "c70cd586-b63b-4ddc-84c3-d01a7523e482",
+            "sourceColumn": "CountryCode",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "SeriesCode",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              }
+            ],
+            "dataType": "string",
+            "lineageTag": "394ac272-a96c-49f0-a2fb-798b6247657a",
+            "sourceColumn": "SeriesCode",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "DESCRIPTION",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              }
+            ],
+            "dataType": "string",
+            "lineageTag": "b63c01f4-99aa-4eb0-8065-a44b9c65b7a6",
+            "sourceColumn": "DESCRIPTION",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "X",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              }
+            ],
+            "dataType": "boolean",
+            "formatString": "\"TRUE\";\"TRUE\";\"FALSE\"",
+            "lineageTag": "04b51a0e-4856-44da-8eca-84c7a280a761",
+            "sourceColumn": "X",
+            "summarizeBy": "none"
+          }
+        ],
+        "lineageTag": "3e8245d9-5d1c-46b8-ac7c-af8d45161296",
+        "partitions": [
+          {
+            "name": "CountrySerices",
+            "mode": "import",
+            "source": {
+              "expression": [
+                "let",
+                "    Source = R.Execute(\"library(WDI)#(lf)library(dplyr)#(lf)#(lf)countries <-#(lf)  c(\"\"AUS\"\",#(lf)    \"\"ARG\"\",#(lf)    \"\"BRA\"\",#(lf)    \"\"CHL\"\",#(lf)    \"\"ESP\"\",#(lf)    \"\"GBR\"\",#(lf)    \"\"JPN\"\",#(lf)    \"\"NZL\"\",#(lf)    \"\"URY\"\",#(lf)    \"\"USA\"\",#(lf)    \"\"WLD\"\")#(lf)#(lf)RawData <- WDIbulk()#(lf)#(lf)SeriesTime <-  RawData$`Series-Time`#(lf)#(lf)CountrySerices <-#(lf)  RawData$`Country-Series` %>% filter(CountryCode %in% countries)#(lf)#(lf)Series <- RawData$Series#(lf)#(lf)Country <- RawData$Country  %>% filter(Country.Code %in% countries)#(lf)#(lf)FootNote <- RawData$FootNote %>% filter(CountryCode %in% countries)#(lf)#(lf)SeriesData <- RawData$Data %>% filter(Country.Code %in% countries)\"),",
+                "    CountrySerices1 = Source{[Name=\"CountrySerices\"]}[Value]",
+                "in",
+                "    CountrySerices1"
+              ],
+              "type": "m"
+            }
+          }
+        ]
+      },
+      {
+        "name": "FootNote",
+        "annotations": [
+          {
+            "name": "PBI_ResultType",
+            "value": "Exception"
+          }
+        ],
+        "columns": [
+          {
+            "name": "CountryCode",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              }
+            ],
+            "dataType": "string",
+            "lineageTag": "a5f6b970-4baa-4987-948d-0d586295cf0a",
+            "sourceColumn": "CountryCode",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "SeriesCode",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              }
+            ],
+            "dataType": "string",
+            "lineageTag": "b167c5cd-f90e-4600-b280-11d356abcaa6",
+            "sourceColumn": "SeriesCode",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "Year",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              }
+            ],
+            "dataType": "string",
+            "lineageTag": "b536b8d2-1f94-4e11-a641-21644bf51b12",
+            "sourceColumn": "Year",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "DESCRIPTION",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              }
+            ],
+            "dataType": "string",
+            "lineageTag": "fe922103-dfdc-4969-b582-45df7eed1bee",
+            "sourceColumn": "DESCRIPTION",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "X",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              }
+            ],
+            "dataType": "boolean",
+            "formatString": "\"TRUE\";\"TRUE\";\"FALSE\"",
+            "lineageTag": "7d1dccdc-ddd2-48de-92fd-b8e6ca6b5926",
+            "sourceColumn": "X",
+            "summarizeBy": "none"
+          }
+        ],
+        "lineageTag": "5de870d4-827b-41c7-a1fe-dbb0c2320995",
+        "partitions": [
+          {
+            "name": "FootNote",
+            "mode": "import",
+            "source": {
+              "expression": [
+                "let",
+                "    Source = R.Execute(\"library(WDI)#(lf)library(dplyr)#(lf)#(lf)countries <-#(lf)  c(\"\"AUS\"\",#(lf)    \"\"ARG\"\",#(lf)    \"\"BRA\"\",#(lf)    \"\"CHL\"\",#(lf)    \"\"ESP\"\",#(lf)    \"\"GBR\"\",#(lf)    \"\"JPN\"\",#(lf)    \"\"NZL\"\",#(lf)    \"\"URY\"\",#(lf)    \"\"USA\"\",#(lf)    \"\"WLD\"\")#(lf)#(lf)RawData <- WDIbulk()#(lf)#(lf)SeriesTime <-  RawData$`Series-Time`#(lf)#(lf)CountrySerices <-#(lf)  RawData$`Country-Series` %>% filter(CountryCode %in% countries)#(lf)#(lf)Series <- RawData$Series#(lf)#(lf)Country <- RawData$Country  %>% filter(Country.Code %in% countries)#(lf)#(lf)FootNote <- RawData$FootNote %>% filter(CountryCode %in% countries)#(lf)#(lf)SeriesData <- RawData$Data %>% filter(Country.Code %in% countries)\"),",
+                "    FootNote1 = Source{[Name=\"FootNote\"]}[Value]",
+                "in",
+                "    FootNote1"
+              ],
+              "type": "m"
+            }
+          }
+        ]
+      },
+      {
+        "name": "Series",
+        "annotations": [
+          {
+            "name": "PBI_ResultType",
+            "value": "Exception"
+          }
+        ],
+        "columns": [
+          {
+            "name": "Series.Code",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              }
+            ],
+            "dataType": "string",
+            "lineageTag": "ff32216e-6910-46ee-8cbe-ebc712655c6d",
+            "sourceColumn": "Series.Code",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "Topic",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              }
+            ],
+            "dataType": "string",
+            "lineageTag": "ca423395-6bcf-42f3-9a82-2ce6733701fd",
+            "sourceColumn": "Topic",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "Indicator.Name",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              }
+            ],
+            "dataType": "string",
+            "lineageTag": "cf62e8e0-7cbb-4915-b90a-6659ef7db473",
+            "sourceColumn": "Indicator.Name",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "Short.definition",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              }
+            ],
+            "dataType": "string",
+            "lineageTag": "a2a2e4ae-4556-48da-a6d0-e56e29e649f3",
+            "sourceColumn": "Short.definition",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "Long.definition",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              }
+            ],
+            "dataType": "string",
+            "lineageTag": "4ab0a8b8-d073-432a-9806-e43245951bea",
+            "sourceColumn": "Long.definition",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "Unit.of.measure",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              }
+            ],
+            "dataType": "string",
+            "lineageTag": "c932a429-e9ff-4b12-8174-7ea7d3ffbc54",
+            "sourceColumn": "Unit.of.measure",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "Periodicity",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              }
+            ],
+            "dataType": "string",
+            "lineageTag": "70f3fa9e-b4f1-4a56-b511-80f16db34f2b",
+            "sourceColumn": "Periodicity",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "Base.Period",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              }
+            ],
+            "dataType": "string",
+            "lineageTag": "dcd68468-f2b6-41b2-8010-0f0d8a88dd4f",
+            "sourceColumn": "Base.Period",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "Other.notes",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              }
+            ],
+            "dataType": "string",
+            "lineageTag": "f23f081c-9479-4cfb-a021-91e37a9e6ff7",
+            "sourceColumn": "Other.notes",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "Aggregation.method",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              }
+            ],
+            "dataType": "string",
+            "lineageTag": "4caae5a6-7ab2-487f-a6cd-e4d998776a03",
+            "sourceColumn": "Aggregation.method",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "Limitations.and.exceptions",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              }
+            ],
+            "dataType": "string",
+            "lineageTag": "cbe68a09-9a1a-4e5a-ae18-57a8e01c9b85",
+            "sourceColumn": "Limitations.and.exceptions",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "Notes.from.original.source",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              }
+            ],
+            "dataType": "string",
+            "lineageTag": "aa00fc9c-5160-4e4e-a76a-44ac851634e5",
+            "sourceColumn": "Notes.from.original.source",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "General.comments",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              }
+            ],
+            "dataType": "string",
+            "lineageTag": "7d4b92a5-cc7b-46d4-9f01-4f66a27f2fdd",
+            "sourceColumn": "General.comments",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "Source",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              }
+            ],
+            "dataType": "string",
+            "lineageTag": "7cbfb353-45c4-4c35-9908-98a5852a64a1",
+            "sourceColumn": "Source",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "Statistical.concept.and.methodology",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              }
+            ],
+            "dataType": "string",
+            "lineageTag": "7562cb27-38b8-4bcf-a9e3-84794160cd82",
+            "sourceColumn": "Statistical.concept.and.methodology",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "Development.relevance",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              }
+            ],
+            "dataType": "string",
+            "lineageTag": "258d0427-71ba-46a1-8770-0f11d1481cab",
+            "sourceColumn": "Development.relevance",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "Related.source.links",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              }
+            ],
+            "dataType": "string",
+            "lineageTag": "9cdc8891-75be-4887-b80d-249ba26126d6",
+            "sourceColumn": "Related.source.links",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "Other.web.links",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              }
+            ],
+            "dataType": "string",
+            "lineageTag": "4ea6ff77-0eba-41ac-a04e-bae12c1b4a1f",
+            "sourceColumn": "Other.web.links",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "Related.indicators",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              }
+            ],
+            "dataType": "string",
+            "lineageTag": "acef53e3-7653-4716-8eaa-6e3e444329f2",
+            "sourceColumn": "Related.indicators",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "License.Type",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              }
+            ],
+            "dataType": "string",
+            "lineageTag": "48f9fac6-5d4e-407c-a5d2-908e747d80b2",
+            "sourceColumn": "License.Type",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "X",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              }
+            ],
+            "dataType": "boolean",
+            "formatString": "\"TRUE\";\"TRUE\";\"FALSE\"",
+            "lineageTag": "793da9b6-225e-4adc-8d99-de427d2cc78b",
+            "sourceColumn": "X",
+            "summarizeBy": "none"
+          }
+        ],
+        "lineageTag": "2cdfc009-a0b2-4548-89bf-6872a35cf263",
+        "partitions": [
+          {
+            "name": "Series",
+            "mode": "import",
+            "source": {
+              "expression": [
+                "let",
+                "    Source = R.Execute(\"library(WDI)#(lf)library(dplyr)#(lf)#(lf)countries <-#(lf)  c(\"\"AUS\"\",#(lf)    \"\"ARG\"\",#(lf)    \"\"BRA\"\",#(lf)    \"\"CHL\"\",#(lf)    \"\"ESP\"\",#(lf)    \"\"GBR\"\",#(lf)    \"\"JPN\"\",#(lf)    \"\"NZL\"\",#(lf)    \"\"URY\"\",#(lf)    \"\"USA\"\",#(lf)    \"\"WLD\"\")#(lf)#(lf)RawData <- WDIbulk()#(lf)#(lf)SeriesTime <-  RawData$`Series-Time`#(lf)#(lf)CountrySerices <-#(lf)  RawData$`Country-Series` %>% filter(CountryCode %in% countries)#(lf)#(lf)Series <- RawData$Series#(lf)#(lf)Country <- RawData$Country  %>% filter(Country.Code %in% countries)#(lf)#(lf)FootNote <- RawData$FootNote %>% filter(CountryCode %in% countries)#(lf)#(lf)SeriesData <- RawData$Data %>% filter(Country.Code %in% countries)\"),",
+                "    Series1 = Source{[Name=\"Series\"]}[Value]",
+                "in",
+                "    Series1"
+              ],
+              "type": "m"
+            }
+          }
+        ]
+      },
+      {
+        "name": "SeriesData",
+        "annotations": [
+          {
+            "name": "PBI_ResultType",
+            "value": "Exception"
+          }
+        ],
+        "columns": [
+          {
+            "name": "Country.Name",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              }
+            ],
+            "dataType": "string",
+            "lineageTag": "2788c112-28f5-49ac-9061-9a48f1004be6",
+            "sourceColumn": "Country.Name",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "Country.Code",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              }
+            ],
+            "dataType": "string",
+            "lineageTag": "6b6d7eca-de1f-4d6a-986a-4b181317c5ac",
+            "sourceColumn": "Country.Code",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "Indicator.Name",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              }
+            ],
+            "dataType": "string",
+            "lineageTag": "7edcfff5-c627-4660-876f-7ad1cebf33ac",
+            "sourceColumn": "Indicator.Name",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "Indicator.Code",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              }
+            ],
+            "dataType": "string",
+            "lineageTag": "c8f426bb-a3c8-480f-8189-0d2f87ffffa3",
+            "sourceColumn": "Indicator.Code",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "year",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              }
+            ],
+            "dataType": "int64",
+            "formatString": "0",
+            "lineageTag": "4a554097-bd3b-4df1-91de-933f32ccd366",
+            "sourceColumn": "year",
+            "summarizeBy": "sum"
+          },
+          {
+            "name": "value",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              },
+              {
+                "name": "PBI_FormatHint",
+                "value": "{\"isGeneralNumber\":true}"
+              }
+            ],
+            "dataType": "double",
+            "lineageTag": "4941b173-4168-477c-9e0a-6ca6fec8b3b6",
+            "sourceColumn": "value",
+            "summarizeBy": "sum"
+          }
+        ],
+        "lineageTag": "857248fa-bdac-4d28-a675-f7420c36a42d",
+        "partitions": [
+          {
+            "name": "SeriesData",
+            "mode": "import",
+            "source": {
+              "expression": [
+                "let",
+                "    Source = R.Execute(\"library(WDI)#(lf)library(dplyr)#(lf)#(lf)countries <-#(lf)  c(\"\"AUS\"\",#(lf)    \"\"ARG\"\",#(lf)    \"\"BRA\"\",#(lf)    \"\"CHL\"\",#(lf)    \"\"ESP\"\",#(lf)    \"\"GBR\"\",#(lf)    \"\"JPN\"\",#(lf)    \"\"NZL\"\",#(lf)    \"\"URY\"\",#(lf)    \"\"USA\"\",#(lf)    \"\"WLD\"\")#(lf)#(lf)RawData <- WDIbulk()#(lf)#(lf)SeriesTime <-  RawData$`Series-Time`#(lf)#(lf)CountrySerices <-#(lf)  RawData$`Country-Series` %>% filter(CountryCode %in% countries)#(lf)#(lf)Series <- RawData$Series#(lf)#(lf)Country <- RawData$Country  %>% filter(Country.Code %in% countries)#(lf)#(lf)FootNote <- RawData$FootNote %>% filter(CountryCode %in% countries)#(lf)#(lf)SeriesData <- RawData$Data %>% filter(Country.Code %in% countries)\"),",
+                "    SeriesData1 = Source{[Name=\"SeriesData\"]}[Value]",
+                "in",
+                "    SeriesData1"
+              ],
+              "type": "m"
+            }
+          }
+        ]
+      },
+      {
+        "name": "SeriesTime",
+        "annotations": [
+          {
+            "name": "PBI_ResultType",
+            "value": "Exception"
+          }
+        ],
+        "columns": [
+          {
+            "name": "SeriesCode",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              }
+            ],
+            "dataType": "string",
+            "lineageTag": "6991f866-40e2-4b3f-aa9e-e9164dd1a40a",
+            "sourceColumn": "SeriesCode",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "Year",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              }
+            ],
+            "dataType": "string",
+            "lineageTag": "5d3af921-e730-49a9-9993-b4d3d5ffa5f4",
+            "sourceColumn": "Year",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "DESCRIPTION",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              }
+            ],
+            "dataType": "string",
+            "lineageTag": "f83e56f3-1d91-46e3-a36a-ef62a59059f0",
+            "sourceColumn": "DESCRIPTION",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "X",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              }
+            ],
+            "dataType": "boolean",
+            "formatString": "\"TRUE\";\"TRUE\";\"FALSE\"",
+            "lineageTag": "db1bf2cd-309c-4631-b4a6-7be9f8d3b092",
+            "sourceColumn": "X",
+            "summarizeBy": "none"
+          }
+        ],
+        "lineageTag": "7c010d74-bdfc-47d1-9113-c6e09cb04ec7",
+        "partitions": [
+          {
+            "name": "SeriesTime",
+            "mode": "import",
+            "source": {
+              "expression": [
+                "let",
+                "    Source = R.Execute(\"library(WDI)#(lf)library(dplyr)#(lf)#(lf)countries <-#(lf)  c(\"\"AUS\"\",#(lf)    \"\"ARG\"\",#(lf)    \"\"BRA\"\",#(lf)    \"\"CHL\"\",#(lf)    \"\"ESP\"\",#(lf)    \"\"GBR\"\",#(lf)    \"\"JPN\"\",#(lf)    \"\"NZL\"\",#(lf)    \"\"URY\"\",#(lf)    \"\"USA\"\",#(lf)    \"\"WLD\"\")#(lf)#(lf)RawData <- WDIbulk()#(lf)#(lf)SeriesTime <-  RawData$`Series-Time`#(lf)#(lf)CountrySerices <-#(lf)  RawData$`Country-Series` %>% filter(CountryCode %in% countries)#(lf)#(lf)Series <- RawData$Series#(lf)#(lf)Country <- RawData$Country  %>% filter(Country.Code %in% countries)#(lf)#(lf)FootNote <- RawData$FootNote %>% filter(CountryCode %in% countries)#(lf)#(lf)SeriesData <- RawData$Data %>% filter(Country.Code %in% countries)\"),",
+                "    SeriesTime1 = Source{[Name=\"SeriesTime\"]}[Value]",
+                "in",
+                "    SeriesTime1"
+              ],
+              "type": "m"
+            }
+          }
+        ]
+      }
+    ]
+  }
+}
