@@ -1407,6 +1407,226 @@
             }
           }
         ]
+      },
+      {
+        "name": "Meassure Table",
+        "annotations": [
+          {
+            "name": "PBI_Id",
+            "value": "6edd7adc291341d98ca128c70702371c"
+          },
+          {
+            "name": "436ba87b-9c83-4389-a31b-ebd06a36be98",
+            "value": "{\"Expression\":\"\"}"
+          }
+        ],
+        "columns": [
+          {
+            "name": "Column",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              }
+            ],
+            "dataType": "int64",
+            "formatString": "0",
+            "isDataTypeInferred": true,
+            "isNameInferred": true,
+            "lineageTag": "b7a21212-b64c-460c-a129-4c50aad97d85",
+            "sourceColumn": "[Column]",
+            "summarizeBy": "sum",
+            "type": "calculatedTableColumn"
+          }
+        ],
+        "lineageTag": "6999bed8-3feb-45ff-895b-2d63a1fe4ecd",
+        "measures": [
+          {
+            "name": "CY GDP Nominal",
+            "displayFolder": "GDP Nominal",
+            "expression": "CALCULATE(SUM(SeriesData[value]), SeriesData[Indicator.Code] = \"NY.GDP.MKTP.CD\" && SeriesData[year] = MAX(SeriesData[year]))",
+            "formatString": "\\$#,0;(\\$#,0);\\$#,0",
+            "lineageTag": "eb052b09-41c7-4062-a9a8-2e1181bdc6b9"
+          },
+          {
+            "name": "PY GDP Nominal",
+            "displayFolder": "GDP Nominal",
+            "expression": "CALCULATE(SUM(SeriesData[value]), SeriesData[Indicator.Code] = \"NY.GDP.MKTP.CD\" && SeriesData[year] = MAX(SeriesData[year]) - 1)",
+            "formatString": "\\$#,0;(\\$#,0);\\$#,0",
+            "lineageTag": "3f6d72a6-c068-4a33-b8f4-b2d6cc25eb4c"
+          },
+          {
+            "name": "CY GDP Per Capita Nominal",
+            "displayFolder": "GDP Nominal",
+            "expression": "CALCULATE(AVERAGE(SeriesData[value]), SeriesData[Indicator.Code] = \"NY.GDP.PCAP.CD\" && SeriesData[year] = MAX(SeriesData[year]))",
+            "formatString": "\\$#,0;(\\$#,0);\\$#,0",
+            "lineageTag": "f72949d8-1d03-4ba4-8d6c-e878e46acda3"
+          },
+          {
+            "name": "PY GDP Per Capita Nominal",
+            "displayFolder": "GDP Nominal",
+            "expression": "CALCULATE(AVERAGE(SeriesData[value]), SeriesData[Indicator.Code] = \"NY.GDP.PCAP.CD\" && SeriesData[year] = MAX(SeriesData[year]) - 1)",
+            "formatString": "\\$#,0;(\\$#,0);\\$#,0",
+            "lineageTag": "2016c69a-1f9d-485b-9b2c-3c3a191da497"
+          },
+          {
+            "name": "GDP Nominal",
+            "annotations": [
+              {
+                "name": "PBI_FormatHint",
+                "value": "{\"isGeneralNumber\":true}"
+              }
+            ],
+            "displayFolder": "GDP Nominal",
+            "expression": "CALCULATE(SUM(SeriesData[value]), SeriesData[Indicator.Code] = \"NY.GDP.MKTP.CD\")",
+            "lineageTag": "dae612d9-2a0f-4678-88e3-cdecfd456899"
+          },
+          {
+            "name": "GDP Per Capita Nominal",
+            "annotations": [
+              {
+                "name": "PBI_FormatHint",
+                "value": "{\"isGeneralNumber\":true}"
+              }
+            ],
+            "displayFolder": "GDP Nominal",
+            "expression": "CALCULATE(AVERAGE(SeriesData[value]), SeriesData[Indicator.Code] = \"NY.GDP.PCAP.CD\")",
+            "lineageTag": "ce9994a2-91a4-45cd-a516-74313240b500"
+          },
+          {
+            "name": "GDP Per Capita PPP",
+            "annotations": [
+              {
+                "name": "PBI_FormatHint",
+                "value": "{\"isGeneralNumber\":true}"
+              }
+            ],
+            "displayFolder": "GDP PPP",
+            "expression": "CALCULATE(AVERAGE(SeriesData[value]), SeriesData[Indicator.Code] = \"NY.GDP.PCAP.PP.CD\")",
+            "lineageTag": "ab09c329-586b-4a1d-94d5-4ea393dd939f"
+          },
+          {
+            "name": "GDP PPP",
+            "annotations": [
+              {
+                "name": "PBI_FormatHint",
+                "value": "{\"isGeneralNumber\":true}"
+              }
+            ],
+            "displayFolder": "GDP PPP",
+            "expression": "CALCULATE(SUM(SeriesData[value]), SeriesData[Indicator.Code] = \"NY.GDP.MKTP.PP.CD\")",
+            "lineageTag": "e63dcc65-bcdc-4b16-8e5e-d76f36a0b22a"
+          }
+        ],
+        "partitions": [
+          {
+            "name": "Meassure Table",
+            "mode": "import",
+            "source": {
+              "expression": "Row(\"Column\", BLANK())",
+              "type": "calculated"
+            }
+          }
+        ]
+      },
+      {
+        "name": "Parameter",
+        "annotations": [
+          {
+            "name": "PBI_Id",
+            "value": "7a3f2b9377b84a378c51ac2d9ff4aff8"
+          }
+        ],
+        "columns": [
+          {
+            "name": "Parameter",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              }
+            ],
+            "dataType": "string",
+            "isDataTypeInferred": true,
+            "isNameInferred": false,
+            "lineageTag": "32bfdfbd-70bf-4f9c-85b3-7f45604c11ec",
+            "relatedColumnDetails": {
+              "groupByColumns": [
+                {
+                  "groupingColumn": "Parameter Fields"
+                }
+              ]
+            },
+            "sortByColumn": "Parameter Order",
+            "sourceColumn": "[Value1]",
+            "summarizeBy": "none",
+            "type": "calculatedTableColumn"
+          },
+          {
+            "name": "Parameter Fields",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              }
+            ],
+            "dataType": "string",
+            "extendedProperties": [
+              {
+                "name": "ParameterMetadata",
+                "type": "json",
+                "value": {
+                  "kind": 2,
+                  "version": 3
+                }
+              }
+            ],
+            "isDataTypeInferred": true,
+            "isHidden": true,
+            "isNameInferred": false,
+            "lineageTag": "baba4ad1-9bfa-4aec-94f3-ee457a4b980c",
+            "sortByColumn": "Parameter Order",
+            "sourceColumn": "[Value2]",
+            "summarizeBy": "none",
+            "type": "calculatedTableColumn"
+          },
+          {
+            "name": "Parameter Order",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              }
+            ],
+            "dataType": "int64",
+            "formatString": "0",
+            "isDataTypeInferred": true,
+            "isHidden": true,
+            "isNameInferred": false,
+            "lineageTag": "cf1f263d-1705-4e4a-92da-882b620cb50e",
+            "sourceColumn": "[Value3]",
+            "summarizeBy": "sum",
+            "type": "calculatedTableColumn"
+          }
+        ],
+        "lineageTag": "86de2b8f-00b4-4dfc-adfa-8db25adafaeb",
+        "partitions": [
+          {
+            "name": "Parameter",
+            "mode": "import",
+            "source": {
+              "expression": [
+                "{",
+                "    (\"GDP Nominal\", NAMEOF('Meassure Table'[GDP Nominal]), 0),",
+                "    (\"GDP Per Capita Nominal\", NAMEOF('Meassure Table'[GDP Per Capita Nominal]), 1),",
+                "    (\"GDP Per Capita PPP\", NAMEOF('Meassure Table'[GDP Per Capita PPP]), 2),",
+                "    (\"GDP PPP\", NAMEOF('Meassure Table'[GDP PPP]), 3)",
+                "}"
+              ],
+              "type": "calculated"
+            }
+          }
+        ]
       }
     ]
   }
