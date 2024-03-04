@@ -1,0 +1,701 @@
+# GBM 
+
+The geometric brownian motion model is given by the following formula:
+
+$$S_{t+1} = S_t e^{(r - \frac{\sigma^2}{2})\Delta t + \sigma \sqrt{\Delta t} Z}$$
+
+where $Z$ is a standard normal random variable.
+
+```{r}
+GBM_drift <- function(mu, sd, delta_t) {
+    # mu = mean return, sd = standard deviation of returns, delta_t = time interval as a fraction of a year
+    (mu + sd^2 / 2) / delta_t
+}
+
+GBM_drift(mean(nsm.r), sd(nsm.r), 1 / 12)
+
+GBM_volatility <- function(mu, sd, delta_t) {
+    # mu = mean return, sd = standard deviation of returns, delta_t = time interval as a fraction of a year
+    sqrt(sd^2 / delta_t)
+}
+```
+
+# Black Scholes 
+
+Black scholes prices options using the following formula:
+
+$$C = S \Phi(d_1) - K e^{-rT} \Phi(d_2)$$ 
+
+$$P = K e^{-rT} \Phi(-d_2) - S \Phi(-d_1)$$
+
+where $d_1$ and $d_2$ are defined as:
+
+$$d_1 = \frac{ln(\frac{S}{K}) + (r + \frac{\sigma^2}{2})T}{\sigma \sqrt{T}}$$
+
+$$d_2 = d_1 - \sigma \sqrt{T}$$
+
+```{r}
+black_scholes_call <- function(S, strike, rate, maturity, sigma) {
+    # S = spot price, K = strike, r = risk free rate, T = maturity, sigma = volatility
+    d1 <- (log(S / strike) + (rate + 0.5 * sigma^2) * maturity) / (sigma * sqrt(maturity))
+    d2 <- d1 - sigma * sqrt(maturity)
+    S * pnorm(d1) - strike * exp(-rate * maturity) * pnorm(d2)
+}
+
+black_scholes_put <- function(S, strike, rate, maturity, sigma) {
+    # S = spot price, K = strike, r = risk free rate, T = maturity
+    d1 <- (log(S / strike) + (rate + 0.5 * sigma^2) * maturity) / (sigma * sqrt(maturity))
+    d2 <- d1 - sigma * sqrt(maturity)
+    strike * exp(-rate * maturity) * pnorm(-d2) - S * pnorm(-d1)
+}
+
+implied_volatility_call <- function(price, S, strike, rate, maturity) {
+    # S = spot price, price = price of option, stike = strike, r = risk free rate, T = maturity
+    bs_call <- function(sigma) {
+        d1 <- (log(S / strike) + (rate + 0.5 * sigma^2) * maturity) / (sigma * sqrt(maturity))
+        d2 <- d1 - sigma * sqrt(maturity)
+        return(S * pnorm(d1) - strike * exp(-rate * maturity) * pnorm(d2) - price)
+    }
+    uniroot(bs_call, interval = c(0, 100))$root
+}
+
+implied_volatility_put <- function(price, S, strike, rate, maturity) {
+    # S = spot price, P = price, K = strike, r = risk free rate, T = maturity
+    bs_put <- function(sigma) {
+        d1 <- (log(S / strike) + (rate + 0.5 * sigma^2) * maturity) / (sigma * sqrt(maturity))
+        d2 <- d1 - sigma * sqrt(maturity)
+        return(strike * exp(-rate * maturity) * pnorm(-d2) - S * pnorm(-d1) - price)
+    }
+    uniroot(bs_put, interval = c(0, 100))$root
+}
+```
+
+# ES and VaR
+
+Expected shortfall (ES) and value at risk (VaR) are two measures of risk. VaR is the maximum loss that can be expected with a given probability. ES is the average loss that can be expected with a given probability. ES is a more accurate measure of risk than VaR.
+
+```{r}
+expected_shortfall <- function(investment, p, mu, sd) {
+    # investment = amount invested, p = probability of loss, mu = mean return, sd = standard deviation of returns
+    Q_p <- qlnorm(p, mu, sd) - 1
+    first_term <- exp(mu + sd^2 / 2) / p
+    second_term <- pnorm((log(Q_p + 1) - mu - sd^2) / sd)
+    kappa <- first_term * second_term - 1
+    ES <- investment * kappa
+    results <- c(Q_p, first_term, second_term, kappa, ES)
+    names(results) <- c("Q_p", "first_term", "second_term", "kappa", "ES")
+    return(results)
+}
+
+value_at_risk <- function(investment, p, mu, sd) {
+    # investment = amount invested, p = probability of loss, mu = mean return, sd = standard deviation of returns
+    investment * (qlnorm(p, mu, sd) - 1)
+} # usually use continuous compounding returns, little r
+
+m1_gbm <- function(r, p, H = 1) {
+    # r = returns, p = probability of loss, H = horizon
+    require(stats)
+    m <- as.numeric(mean(r))
+    lambda <- as.numeric(sqrt(var(r)))
+
+    Q <- qlnorm(p, m, lambda) - 1
+
+    return(Q) # Q is the value at risk
+}
+
+m2_garch_gauss <- function(R, p, H = 1) {
+    # R = returns, p = probability of loss, H = horizon
+    require(fGarch)
+    garch.fit <- garchFit(~ garch(1, 1), R, trace = F)
+    pred <- predict(garch.fit, n.ahead = H)
+    m <- pred$meanForecast
+    sd <- pred$standardDeviation
+
+    Q <- qnorm(p, m, sd)
+
+    return(Q) # Q is the value at risk
+}
+
+m3_garch_t <- function(R, p, H = 1) {
+    # R = returns, p = probability of loss, H = horizon
+    require(fGarch)
+    garch.fit <- garchFit(~ garch(1, 1), R, cond.dist = "std", trace = F)
+    shape <- garch.fit@fit$matcoef[[5, 1]]
+    pred <- predict(garch.fit, n.ahead = H)
+    m <- pred$meanForecast
+    sd <- pred$standardDeviation
+
+    Q <- qstd(p, mean = m, sd = sd, nu = shape)
+
+    return(Q) # Q is the value at risk
+}
+
+m4_PoT <- function(R, p, H = 1, Qu = 0.05) {
+    # R = returns, p = probability of loss, H = horizon
+    require(fExtremes)
+    nR <- -R
+    u <- quantile(nR, 1 - Qu) # threshold
+
+    fit_gpd <- gpdFit(nR,
+        u = u, type = "pwm",
+        information = c("observed", "expected")
+    )
+
+    xi <- fit_gpd@fit$par.ests[1]
+    sigma <- fit_gpd@fit$par.ests[2]
+    n <- length(nR) # sample size
+    Nu <- sum(nR > u)
+
+    Q <- as.numeric((u + (sigma / xi) * ((n * p / Nu)^(-xi) - 1)))
+
+    return(Q) # Q is the value at risk
+}
+```
+
+# Spearman Correlation 
+
+```{r}
+spears <- function(gammahat){
+    (6/pi)*asin(gammahat) # this is for gaussian copula
+}
+
+```
+
+# Binomial Tree 
+
+Binomial tree is a method to price options using a tree structure. The tree is built by assuming that the stock price can go up or down by a certain amount at each time step. The tree is then used to price the option by backtracking from the end of the tree to the beginning. It does so by assuming that the option price at the end of the tree is the payoff of the option. Then, the option price at the previous time step is calculated by discounting the option price at the next time step. This process is repeated until the option price at the beginning of the tree is calculated.
+
+```{r}
+recombining_tree <- function(P0, sigma, delta_t, N) {
+    # P0 = initial price, sigma = volatility, delta_t = time step, N = number of steps
+    tree <- matrix(0, nrow = N + 1, ncol = N + 1)
+    U <- exp(sigma * sqrt(delta_t))
+    D <- exp(-sigma * sqrt(delta_t))
+    for (i in 1:(N + 1)) {
+        for (j in 1:i) {
+            tree[i, j] <- P0 * U^(j - 1) * D^(i - j)
+        }
+    }
+    return(tree)
+}
+
+q_prob <- function(r, delta_t, sigma) {
+    # r = risk free rate, delta_t = time step, sigma = volatility
+    u <- exp(sigma * sqrt(delta_t))
+    d <- exp(-sigma * sqrt(delta_t))
+    return((exp(r * delta_t) - d) / (u - d))
+}
+
+value_american_put_option <- function(tree, sigma, delta_t, r, K) {
+    # tree = recombining tree, sigma = volatility, delta_t = time step, r = risk free rate, K = strike price
+    q <- q_prob(r, delta_t, sigma)
+    option_tree <- matrix(0, nrow = nrow(tree), ncol = ncol(tree))
+    option_tree[nrow(option_tree), ] <- pmax(K - tree[nrow(tree), ], 0)
+    for (i in (nrow(tree) - 1):1) {
+        for (j in 1:i) {
+            NO <- option_tree[i, j] <- ((1 - q) * option_tree[i + 1, j] +
+                q * option_tree[i + 1, j + 1]) *
+                exp(-r * delta_t)
+            EX <- pmax(K - tree[i, j], 0)
+            option_tree[i, j] <- pmax(NO, EX)
+        }
+    }
+    return(option_tree)
+}
+
+value_american_call_option <- function(tree, sigma, delta_t, r, K) {
+    # tree = recombining tree, sigma = volatility, delta_t = time step, r = risk free rate, K = strike price
+    q <- q_prob(r, delta_t, sigma)
+    option_tree <- matrix(0, nrow = nrow(tree), ncol = ncol(tree))
+    option_tree[nrow(option_tree), ] <- pmax(tree[nrow(tree), ] - K, 0)
+    for (i in (nrow(tree) - 1):1) {
+        for (j in 1:i) {
+            NO <- option_tree[i, j] <- ((1 - q) * option_tree[i + 1, j] +
+                q * option_tree[i + 1, j + 1]) *
+                exp(-r * delta_t)
+            EX <- pmax(tree[i, j] - K, 0)
+            option_tree[i, j] <- pmax(NO, EX)
+        }
+    }
+    return(option_tree)
+}
+
+binomial_option_put <- function(P0, sigma, T, r, K, N) {
+    # P0 = initial price, sigma = volatility, T = maturity, r = risk free rate, K = strike price, N = number of steps
+    q <- q_prob(r = r, delta_t = T / N, sigma = sigma)
+    tree <- recombining_tree(P0 = P0, sigma = sigma, delta_t = T / N, N = N)
+    option <- value_american_put_option(tree, sigma = sigma, delta_t = T / N, r = r, K = K)
+    return(list(q = q, stock = tree, option = option, price = option[1, 1]))
+}
+
+binomial_option_call <- function(P0, sigma, T, r, K, N) {
+    # P0 = initial price, sigma = volatility, T = maturity, r = risk free rate, K = strike price, N = number of steps
+    q <- q_prob(r = r, delta_t = T / N, sigma = sigma)
+    tree <- recombining_tree(P0 = P0, sigma = sigma, delta_t = T / N, N = N)
+    option <- value_american_call_option(tree, sigma = sigma, delta_t = T / N, r = r, K = K)
+    return(list(q = q, stock = tree, option = option, price = option[1, 1]))
+}
+```
+
+# Garch 
+
+The GARCH model is a model that is used to model the volatility of a time series. It is a generalization of the ARCH model. The GARCH model is given by the following equation:
+
+$$\sigma_t^2 = \alpha_0 + \alpha_1 a_t^2 + \beta_1 \sigma_{t-1}^2$$
+
+where $a_t = r_t - r_{t-1}$ and $r_t$ is the return at time $t$. The parameters $\alpha_0$, $\alpha_1$, and $\beta_1$ are estimated using maximum likelihood. The GARCH model is used to model the volatility of a time series. The GARCH model is used to model the volatility of a time series.
+
+```{r}
+asymptotic_value <- function(alpha0, alpha1, beta1) {
+    alpha0 / (1 - alpha1 - beta1)
+}
+
+garch_one_step_ahead <- function(alpha0, alpha1, beta1, a_t, sigma_t) {
+    alpha0 + alpha1 * a_t^2 + beta1 * sigma_t^2
+}
+
+garch_forecast_more <- function(alpha0, alpha1, beta1, sigma_s) {
+    alpha0 + (alpha1 + beta1) * sigma_s^2
+}
+```
+
+# Get Portfolio Data 
+
+```{r}
+get_stock_returns <- function(stocks, start, end, freq = "m") {
+    # stocks = vector of stock tickers, start = start date, end = end date, freq = frequency of returns
+    require(tseries)
+    pStocks <- get.hist.quote(stocks[1], start = start, end = end, quote = "AdjClose", retclass = "zoo", compression = freq)
+    T <- length(pStocks)
+    N <- length(stocks)
+    rStocks <- matrix(0, T - 1, N)
+    rStocks[, 1] <- 100 * diff(as.numeric(pStocks)) / as.numeric(pStocks[1:T - 1, ])
+
+    for (i in 2:N) {
+        pStocks <- cbind(pStocks, get.hist.quote(stocks[i], start = start, end = end, quote = "AdjClose", retclass = "zoo", compression = freq))
+        rStocks[, i] <- 100 * diff(as.numeric(pStocks[, i])) / as.numeric(pStocks[1:T - 1, i]) # simple net returns
+    }
+    colnames(pStocks) <- stocks
+    colnames(rStocks) <- stocks
+    return(list(pStocks = pStocks, rStocks = rStocks / 100))
+}
+```
+
+# ONE STEP BINOMIAL TREE 
+
+```{r}
+sigma <- 0.2046067856364
+K <- 25
+T <- 1 / 4
+rfr <- 0.0325
+c.p <- 24.27 
+
+U <- exp(sigma * sqrt(T))
+D <- exp(-sigma * sqrt(T))
+p <- (exp(rfr * T) - D) / (U - D)
+
+p.u <- c.p*U
+p.d <- c.p*D
+
+f.u <- max(0, p.u - K)
+f.d <- max(0, p.d - K)
+
+(f.u - f.d)/(c.p * (U - D) # delta, number stocks to buy to be risk neutral
+
+f <- exp(-rfr * T) * (p * f.u + (1 - p) * f.d)
+
+one_step_binomial_tree <- function(c.p, sigma, K, T, rfr) {
+    # c.p = current price, sigma = volatility, K = strike price, T = maturity, rfr = risk free rate
+    U <- exp(sigma * sqrt(T))
+    D <- exp(-sigma * sqrt(T))
+    p <- (exp(rfr * T) - D) / (U - D)
+
+    p.u <- c.p * U
+    p.d <- c.p * D
+
+    f.u <- max(0, p.u - K)
+    f.d <- max(0, p.d - K)
+
+    f <- exp(-rfr * T) * (p * f.u + (1 - p) * f.d)
+    return(f)
+}
+
+risk_neutral_delta <- function(c.p, sigma, K, T, rfr) {
+    # c.p = current price, sigma = volatility, K = strike price, T = maturity, rfr = risk free rate
+    U <- exp(sigma * sqrt(T))
+    D <- exp(-sigma * sqrt(T))
+    p <- (exp(rfr * T) - D) / (U - D)
+
+    p.u <- c.p * U
+    p.d <- c.p * D
+
+    f.u <- max(0, p.u - K)
+    f.d <- max(0, p.d - K)
+
+    delta <- (f.u - f.d) / (c.p * (U - D))
+    return(delta)
+}
+```
+
+
+# N Step Binomial Tree to Caclulate the Current Price of the Option 
+
+```{r}
+# Set parameters
+S0 <- 24.27    # Initial price of the underlying asset
+K <- 25    # Strike price of the option
+r <- 0.0325   # Risk-free interest rate
+T <- 1/4      # Time to expiration of the option (in years)
+sigma <- 0.204606785 # Volatility of the underlying asset
+
+N_step_tree(S0, K, r, T, sigma, 1)
+
+# Set up the binomial tree
+n <- 2             # Number of steps in the tree
+dt <- T/n          # Time interval between steps
+u <- exp(sigma*sqrt(dt)) # Up factor
+d <- 1/u           # Down factor
+p <- (exp(r*dt)-d)/(u-d) # Risk-neutral probability
+
+# Set up the initial stock prices
+stock_prices <- matrix(NA, n+1, n+1)
+stock_prices[1,1] <- S0
+for (i in 2:(n+1)) {
+  stock_prices[1:i-1,i] <- stock_prices[1:i-1,i-1] * u
+  stock_prices[i,i] <- stock_prices[i-1,i-1] * d
+}
+
+# Set up the option prices at expiration
+option_prices <- matrix(NA, n+1, n+1)
+option_prices[,n+1] <- pmax(stock_prices[,n+1]-K, 0)
+
+# Calculate the option prices at earlier times
+for (j in n:1) {
+  for (i in 1:j) {
+    option_prices[i,j] <- exp(-r*dt)*(p*option_prices[i,j+1] + (1-p)*option_prices[i+1,j+1])
+  }
+}
+
+# Print the option price at time 0
+option_price <- option_prices[1,1]
+cat("Option price:", option_price, "\n")
+
+N_step_tree <- function(S0,K ,r ,T ,sigma, n){
+    dt <- T/n          # Time interval between steps
+    u <- exp(sigma*sqrt(dt)) # Up factor
+    d <- 1/u           # Down factor
+    p <- (exp(r*dt)-d)/(u-d) # Risk-neutral probability
+
+    # Set up the initial stock prices
+    stock_prices <- matrix(NA, n+1, n+1)
+    stock_prices[1,1] <- S0
+    for (i in 2:(n+1)) {
+      stock_prices[1:i-1,i] <- stock_prices[1:i-1,i-1] * u
+      stock_prices[i,i] <- stock_prices[i-1,i-1] * d
+    }
+
+    # Set up the option prices at expiration
+    option_prices <- matrix(NA, n+1, n+1)
+    option_prices[,n+1] <- pmax(stock_prices[,n+1]-K, 0)
+
+    # Calculate the option prices at earlier times
+    for (j in n:1) {
+      for (i in 1:j) {
+        option_prices[i,j] <- exp(-r*dt)*(p*option_prices[i,j+1] + (1-p)*option_prices[i+1,j+1])
+      }
+    }
+
+    # Print the option price at time 0
+    option_price <- option_prices[1,1]
+    cat("Option price:", option_price, "\n")
+
+    }
+```
+
+# SHARPE RATIO
+
+The sharpe ratio is a measure of risk adjusted return. It is calculated as the difference between the expected return and the risk free rate divided by the standard deviation of the return. The sharpe ratio is a measure of the excess return per unit of risk. The higher the sharpe ratio, the better the investment. The sharpe ratio is calculated as follows:
+
+$$\frac{E(R_p) - R_f}{\sigma_p}$$
+
+where $E(R_p)$ is the expected return of the portfolio, $R_f$ is the risk free rate, and $\sigma_p$ is the standard deviation of the portfolio return.
+
+```{r}
+sharpe.post <- function(x, rfr) {
+    # x = returns, rfr = risk free rate
+    ER.x <- mean(x - rfr)
+    SD.x <- sd(x - rfr)
+    return(ER.x / SD.x)
+}
+
+sharpe.ante <- function(x, rfr) {
+    # x = returns, rfr = risk free rate
+    ER.x <- mean(x) - mean(rfr)
+    SD.x <- sd(x)
+    return(ER.x / SD.x)
+}
+```
+
+# Total Returns 
+
+Total simple returns are calculated by multiplying the simple returns together. Total compound returns are calculated by multiplying the compound returns together. The total simple return is the same as the total compound return if the returns are simple returns. The total simple return is different from the total compound return if the returns are compound returns.
+
+```{r}
+calculate_simple_return <- function(monthly_returns) {
+    # Note: monthly returns should be simple returns
+    # Convert monthly returns to decimal format
+    decimal_returns <- monthly_returns / 100
+
+    # Add 1 to each monthly return
+    return_factors <- 1 + decimal_returns
+
+    # Multiply all the monthly return factors together
+    total_return_factor <- prod(return_factors)
+
+    # Subtract 1 from the result to get the total simple return
+    total_simple_return <- (total_return_factor - 1) * 100
+
+    return(total_simple_return)
+}
+
+calculate_cc_return <- function(monthly_returns) {
+    # Note: monthly returns should be simple returns
+    # Convert monthly returns to decimal format
+    decimal_returns <- monthly_returns / 100
+
+    # Add 1 to each monthly return
+    return_factors <- 1 + decimal_returns
+
+    # Multiply all the monthly return factors together
+    total_return_factor <- prod(return_factors)
+
+    # Calculate the continuously compounded return
+    cc_return <- log(total_return_factor)
+
+    return(cc_return)
+}
+```
+
+# Portfolio Standard Deviation and Returns
+
+Portfolio standard deviation is calculated using the following formula: 
+
+$$\sigma_p = \sqrt{\sum_{i=1}^n w_i^2 \sigma_i^2}$$
+
+Portfolio return is calculated using the following formula:
+
+$$r_p = \sum_{i=1}^n w_i r_i$$
+
+```{r} 
+calculate_portfolio_std_dev <- function(weights, std_devs) {
+
+    # Check if inputs are of equal length
+    if (length(weights) != length(std_devs)) {
+        stop("Error: weights and std_devs must have the same length")
+    }
+
+    # Calculate the variance of the portfolio
+    variance <- t(weights) %*% (std_devs^2 * diag(length(weights))) %*% weights
+
+    # Calculate the standard deviation of the portfolio
+    std_dev <- sqrt(variance)
+
+    # Return the standard deviation of the portfolio
+    return(std_dev)
+}
+
+calculate_portfolio_return <- function(asset_returns, asset_weights) {
+    # Multiply asset returns by their weights
+    weighted_returns <- asset_returns * asset_weights
+
+    # Sum the weighted returns to get the total return of the portfolio
+    portfolio_return <- sum(weighted_returns)
+
+    return(portfolio_return)
+}
+```
+
+# MVP 
+
+The minimum variance portfolio is calculated using the following formula:
+
+$$w_{minvar} = \frac{1}{C} V^{-1} \mathbf{1}$$
+
+where $C = \mathbf{1}^T V^{-1} \mathbf{1}$ and $V$ is the covariance matrix of the returns. 
+
+```{r}
+minvar_portfolio <- function(rStocks) {
+    # rStocks = matrix of returns
+    z <- matrix(colMeans(rStocks))
+    V <- var(rStocks)
+    N <- ncol(rStocks)
+    iota <- matrix(1, N, 1)
+    A <- drop(t(iota) %*% solve(V) %*% z)
+    B <- drop(t(z) %*% solve(V) %*% z)
+    C <- drop(t(iota) %*% solve(V) %*% iota)
+    D <- B * C - A^2
+    h <- (1 / D) * (C * (solve(V) %*% z) - A * (solve(V) %*% iota))
+    g <- (1 / D) * (B * (solve(V) %*% iota) - A * (solve(V) %*% z))
+    w_minvar <- (1 / C) * solve(V) %*% iota
+    R_minvar <- t(w_minvar) %*% z
+    Sigma2minvar <- t(w_minvar) %*% V %*% w_minvar
+    list(h = h, g = g, w_minvar = w_minvar, R_minvar = R_minvar, Sigma2minvar = Sigma2minvar)
+}
+```
+
+# Portfolio Optimization 
+
+```{r}
+global_minvar_portfolio <- function(returns, allow_short = TRUE) {
+    # returns = matrix of returns, allow_short = allow short sales
+    require(quadprog)
+    z <- colMeans(returns)
+    V <- var(returns)
+    N <- ncol(returns)
+
+    # Global minimum variance portfolio with no short sales
+    if (!allow_short) {
+        Dmat <- V
+        dvec <- matrix(0, N, 1)
+        Amat <- cbind(rep(1, N), diag(N))
+        bvec <- c(1, rep(0, N))
+        meq <- 1 # number of equality constraints
+        mvp <- solve.QP(Dmat = Dmat, dvec = dvec, Amat = Amat, bvec = bvec, meq = meq)
+    } else { # Global minimum variance portfolio with short sales allowed
+        iota <- matrix(1, N, 1)
+        A <- drop(t(iota) %*% solve(V) %*% z)
+        B <- drop(t(z) %*% solve(V) %*% z)
+        C <- drop(t(iota) %*% solve(V) %*% iota)
+        D <- B * C - A^2
+        h <- (1 / D) * (C * (solve(V) %*% z) - A * (solve(V) %*% iota))
+        g <- (1 / D) * (B * (solve(V) %*% iota) - A * (solve(V) %*% z))
+        w_minvar <- (1 / C) * solve(V) %*% iota
+        mvp <- list(solution = w_minvar)
+    }
+
+    w_minvar <- matrix(mvp$solution)
+    R_minvar <- t(w_minvar) %*% z
+    Sigma2_minvar <- t(w_minvar) %*% V %*% w_minvar
+    rownames(w_minvar) <- colnames(returns)
+
+    return(list(weights = w_minvar, mean_return = R_minvar, variance = Sigma2_minvar))
+}
+```
+
+# Copula 
+
+```{r}
+get_t_copula_correlation <- function(r1, r2) {
+    # r1 = returns of first series, r2 = returns of second series
+    # Fit t distribution to each return series
+    require(MASS)
+    tfit1 <- fitdistr(r1, "t") # can change distribution here, i.e. "t" = t-distribution, "norm" = normal distribution
+    tfit2 <- fitdistr(r2, "t")
+
+    # Compute copula data & latent variables for each series
+    m1 <- coef(tfit1)[1]
+    s1 <- coef(tfit1)[2]
+    df1 <- coef(tfit1)[3]
+    uX <- pt((r1 - m1) / s1, df = df1)
+    xstar <- qnorm(uX)
+
+    m2 <- coef(tfit2)[1]
+    s2 <- coef(tfit2)[2]
+    df2 <- coef(tfit2)[3]
+    uY <- pt((r2 - m2) / s2, df = df2)
+    ystar <- qnorm(uY)
+
+    # Compute Pearson correlation using copula data
+    return(cor(xstar, ystar)) # this is gammahat
+}
+```
+
+# Two Fund Theorem 
+
+Using the two fund theorem, a third portfolio can be created that has a target return and a minimum variance. This is given by the following formula:
+
+$$w_{3} = \frac{1}{\sigma_{1}^2 \mu_{2} - \sigma_{2}^2 \mu_{1}} \left( \mu_{2} \sigma_{1}^2 - \mu_{1} \sigma_{2}^2 \right)$$
+
+where $\sigma_{1}$ and $\sigma_{2}$ are the standard deviations of the two funds and $\mu_{1}$ and $\mu_{2}$ are the expected returns of the two funds. 
+
+The third portfolio can also be calculated using an alpha, which is then used to calculate the weights of the two funds. The alpha is given by the following formula:
+
+$$\alpha = \frac{\mu_{3} - \mu_{1}}{\mu_{2} - \mu_{1}}$$
+
+where $\mu_{3}$ is the target return of the third portfolio. The weights of the two funds are then given by the following formula:
+
+$$w_{1} = \frac{\alpha}{\alpha + 1}$$
+
+$$w_{2} = \frac{1}{\alpha + 1}$$
+
+As alpha varies across the range 0 to 1, all possible portfolios along the efficient frontier can be calculated provided the two initial portfolio's lay on the efficient frontier.
+
+```{r}
+two_fund_theorem_returns_input <- function(portfolio1_returns, portfolio2_returns, target_return) {
+
+    # Calculate the mean and standard deviation of each portfolio
+    mu1 <- mean(portfolio1_returns)
+    sigma1 <- sd(portfolio1_returns)
+    mu2 <- mean(portfolio2_returns)
+    sigma2 <- sd(portfolio2_returns)
+
+    # Create a grid of weights for the two funds
+    grid_size <- 100
+    w1 <- seq(0, 1, length.out = grid_size)
+    w2 <- 1 - w1
+
+    # Calculate the expected return and standard deviation of each combination of weights
+    mu <- w1 * mu1 + w2 * mu2
+    sigma <- sqrt((w1 * sigma1)^2 + (w2 * sigma2)^2 + 2 * w1 * w2 * sigma1 * sigma2)
+
+    # Find the minimum standard deviation portfolio for the target return
+    min_sigma <- Inf
+    for (i in 1:length(mu)) {
+        if (mu[i] >= target_return) {
+            if (sigma[i] < min_sigma) {
+                min_sigma <- sigma[i]
+                w1_min <- w1[i]
+                w2_min <- w2[i]
+                mu_min <- mu[i]
+            }
+        }
+    }
+
+    # Return the weights and expected return of the minimum standard deviation portfolio
+    return(list(weights = c(w1_min, w2_min), expected_return = mu_min))
+}
+
+two_fund_theorem_alpha <- function(portfolio1_returns, portfolio2_returns, alpha, rf) {
+
+    # Calculate the mean and standard deviation of each portfolio
+    mu1 <- mean(portfolio1_returns)
+    sigma1 <- sd(portfolio1_returns)
+    mu2 <- mean(portfolio2_returns)
+    sigma2 <- sd(portfolio2_returns)
+
+    # Create a grid of weights for the two funds
+    grid_size <- 100
+    w1 <- seq(0, 1, length.out = grid_size)
+    w2 <- 1 - w1
+
+    # Calculate the expected return and standard deviation of each combination of weights
+    mu <- w1 * mu1 + w2 * mu2
+    sigma <- sqrt((w1 * sigma1)^2 + (w2 * sigma2)^2 + 2 * w1 * w2 * sigma1 * sigma2)
+
+    # Find the minimum standard deviation portfolio for the given alpha
+    min_sigma <- Inf
+    for (i in 1:length(mu)) {
+        if ((mu[i] - rf) / sigma[i] >= alpha) {
+            if (sigma[i] < min_sigma) {
+                min_sigma <- sigma[i]
+                w1_min <- w1[i]
+                w2_min <- w2[i]
+                mu_min <- mu[i]
+            }
+        }
+    }
+
+    # Return the weights and expected return of the minimum standard deviation portfolio
+    return(list(weights = c(w1_min, w2_min), expected_return = mu_min))
+}
+```
