@@ -1,0 +1,274 @@
+# Loading in The data 
+
+```{python}
+from sklearn.feature_extraction.text import TfidfVectorizer
+import re
+import matplotlib.pyplot as plt
+import numpy as np
+import pandas as pd
+from collections import Counter
+from pyspark.sql import SparkSession
+from pyspark import SparkContext
+import pyspark.sql.functions as func
+from bertopic import BERTopic
+from umap import UMAP
+import scipy
+from sklearn.preprocessing import StandardScaler
+from sklearn.compose import ColumnTransformer
+from sklearn.feature_extraction.text import CountVectorizer
+import warnings
+
+warnings.simplefilter(action='ignore')
+
+SparkContext.setSystemProperty('spark.executor.memory', '16g')
+
+sc = SparkContext("local", "App Name")
+
+spark = SparkSession.builder.master("local").appName("App Name").getOrCreate()
+
+spark.read.json(
+    "Yelp_Data/yelp_academic_dataset_business.json").createOrReplaceTempView("business")
+
+business = spark.sql(''' 
+    SELECT * 
+    FROM business 
+    WHERE UPPER(categories) LIKE '%FOOD%'
+    OR UPPER(categories) LIKE '%RESTAURANT%'
+    OR UPPER(categories) LIKE '%FOODS%'
+    OR UPPER(categories) LIKE '%RESTAURANTS%'
+    OR UPPER(categories) LIKE '%BAR,%'
+    OR UPPER(categories) LIKE '%BARS,%'  
+''').toPandas()
+
+
+def get_closest_cities(data):
+    data_grouped = data.groupby('city').agg(lat=('latitude', 'mean'), long=(
+        'longitude', 'mean'), bus=('business_id', 'nunique')).reset_index()
+
+    lati, longi = data_grouped[data_grouped['city'] ==
+                               'Fishers'].lat.values[0], data_grouped[data_grouped['city'] == 'Fishers'].long.values[0]
+
+    # Calculate the distance between each point and (40, -86)
+    data_grouped['distance'] = np.sqrt(
+        (data_grouped['long'] - (longi))**2 + (data_grouped['lat'] - lati)**2)
+
+    sorted_data_grouped = data_grouped.sort_values('distance')
+    sorted_data_grouped['roll_sum'] = sorted_data_grouped['bus'].cumsum()
+
+    return sorted_data_grouped
+
+
+city_counts = get_closest_cities(business)
+
+city_add = city_counts.head(20).city
+
+# filter for Fishers and the 99 closest cities to Fishers
+business_filtered = business[business['city'].isin(city_add)]
+
+# explode attributes and add price range to dataframe
+attributes = business_filtered.attributes.apply(pd.Series)
+attributes.columns = list(
+    business_filtered['attributes'].iloc[0].asDict().keys())
+business_model_df = pd.concat(
+    [business_filtered, attributes['RestaurantsPriceRange2']], axis=1)
+
+# filter for only price range level 2
+# business_model_df = business_model_df[business_model_df['RestaurantsPriceRange2'].isin(['1','2'])]
+
+# create popularity column
+business_model_df['popularity'] = business_model_df['review_count'] * \
+    business_model_df['stars']
+
+# create a column for the number of attributes a business has
+data_to_r = business_filtered.copy()
+attributes = data_to_r.attributes.apply(pd.Series)
+attributes.columns = data_to_r['attributes'].iloc[0].asDict().keys()
+
+data_to_r_final = pd.concat([data_to_r, attributes], axis=1)
+
+data_to_r_final = data_to_r_final.fillna("No Information", inplace=False)
+data_to_r_final = data_to_r_final.replace('one', 'True', inplace=False)
+data_to_r_final = data_to_r_final.replace(
+    'None', "No Information", inplace=False)
+data_to_r_final = data_to_r_final.replace(
+    "'none'", "No Information", inplace=False)
+
+data_to_r_final.to_csv("business_model_df_ready.csv")
+```
+
+# Running a LM model to Determine most important Attributes in A Businesses Success 
+
+```{r}
+library(tidyverse)
+library(margins)
+
+data <- read.csv("business_model_df_ready.csv")
+
+# make data factorial
+data[sapply(data, is.character)] <- lapply(data[sapply(data, is.character)], as.factor)
+
+# set reference levels so easier to interpret coefficients
+data <- within(data, BikeParking <- relevel(BikeParking, ref = "False"))
+data <- within(data, BikeParking <- relevel(BikeParking, ref = "False"))
+data <- within(data, Caters <- relevel(Caters, ref = "False"))
+data <- within(data, CoatCheck <- relevel(CoatCheck, ref = "False"))
+data <- within(data, Corkage <- relevel(Corkage, ref = "False"))
+data <- within(data, DogsAllowed <- relevel(DogsAllowed, ref = "False"))
+data <- within(data, DriveThru <- relevel(DriveThru, ref = "False"))
+data <- within(data, GoodForDancing <- relevel(GoodForDancing, ref = "False"))
+data <- within(data, GoodForKids <- relevel(GoodForKids, ref = "False"))
+data <- within(data, HappyHour <- relevel(HappyHour, ref = "False"))
+data <- within(data, HasTV <- relevel(HasTV, ref = "False"))
+data <- within(data, OutdoorSeating <- relevel(OutdoorSeating, ref = "False"))
+data <- within(data, RestaurantsDelivery <- relevel(RestaurantsDelivery, ref = "False"))
+data <- within(data, RestaurantsGoodForGroups <- relevel(RestaurantsGoodForGroups, ref = "False"))
+data <- within(data, RestaurantsReservations <- relevel(RestaurantsReservations, ref = "False"))
+data <- within(data, RestaurantsTableService <- relevel(RestaurantsTableService, ref = "False"))
+data <- within(data, RestaurantsTakeOut <- relevel(RestaurantsTakeOut, ref = "False"))
+data <- within(data, WheelchairAccessible <- relevel(WheelchairAccessible, ref = "False"))
+
+# identify attributes with one level
+one_level_cols <- sapply(data, function(x) length(unique(x))) == 1
+names(data)[one_level_cols] # remove from model
+```
+
+# LM Model
+
+```{r}
+# big model to reduce from
+fit_1 <- lm(
+    stars ~ Alcohol + BikeParking + BusinessAcceptsCreditCards + Caters +
+        CoatCheck + Corkage + DogsAllowed + DriveThru + GoodForDancing +
+        GoodForKids + HappyHour + HasTV + NoiseLevel + OutdoorSeating +
+        RestaurantsAttire + RestaurantsDelivery + RestaurantsGoodForGroups +
+        RestaurantsPriceRange2 + RestaurantsReservations +
+        RestaurantsTableService + RestaurantsTakeOut + Smoking +
+        WheelchairAccessible + WiFi,
+    data = data
+)
+
+# model selection
+best_fit <- MASS::stepAIC(fit_1, direction = "both", trace = FALSE)
+
+# see coefficients
+summary(best_fit)$coefficients %>%
+    data.frame() %>%
+    arrange(desc(Estimate)) %>%
+    View()
+
+# plot residuals
+res <- resid(best_fit)
+grDevices::windows()
+plot(
+    res, fitted(best_fit),
+    main = "LM Mdel Residuals vs Fitted Values",
+    xlab = "Fitted Values", ylab = "Residuals"
+) # suggests model not appropriate for data
+```
+
+# Polr Model
+
+```{r}
+data_polr <- data %>% select(
+    stars, Alcohol, BikeParking, BusinessAcceptsCreditCards, Caters, CoatCheck,
+    Corkage, DogsAllowed, DriveThru, GoodForDancing, GoodForKids, HappyHour,
+    HasTV, NoiseLevel, OutdoorSeating, RestaurantsAttire, RestaurantsCounterService,
+    RestaurantsDelivery, RestaurantsGoodForGroups, RestaurantsPriceRange2,
+    RestaurantsReservations, RestaurantsTableService, RestaurantsTakeOut,
+    Smoking, WheelchairAccessible, WiFi
+)
+
+# Make stars an ordinal factor
+data_polr$stars <- ordered(data_polr$stars, levels = c(2:10) / 2)
+
+# fit a big model
+fit_1_polr <- MASS::polr(
+    stars ~ Alcohol + BikeParking + BusinessAcceptsCreditCards + Caters +
+        CoatCheck + Corkage + DogsAllowed + DriveThru + GoodForDancing + GoodForKids +
+        HappyHour + HasTV + NoiseLevel + OutdoorSeating + RestaurantsAttire +
+        RestaurantsDelivery + RestaurantsGoodForGroups + RestaurantsPriceRange2 +
+        RestaurantsReservations + RestaurantsTableService + RestaurantsTakeOut +
+        Smoking + WheelchairAccessible + WiFi,
+    data = data_polr, Hess = TRUE
+)
+
+# get average marginal effect of each variable
+marginal_effects <- margins(fit_1_polr,
+    variables = c(
+        "Alcohol", "BikeParking", "BusinessAcceptsCreditCards", "Caters", "CoatCheck",
+        "Corkage", "DogsAllowed", "DriveThru", "GoodForDancing", "GoodForKids",
+        "HappyHour", "HasTV", "NoiseLevel", "OutdoorSeating", "RestaurantsAttire",
+        "RestaurantsDelivery", "RestaurantsGoodForGroups", "RestaurantsPriceRange2",
+        "RestaurantsReservations", "RestaurantsTableService", "RestaurantsTakeOut",
+        "Smoking", "WheelchairAccessible", "WiFi"
+    ) # copy pasted from above selected variables
+)
+
+marginal_effects %>% summary() # average marginal effects close to zero
+
+polr_best <- MASS::stepAIC(fit_1_polr, direction = "both", trace = FALSE)
+
+coefficients_polr_reduced <- polr_best |>
+    coef() |>
+    names()
+
+coefficients_polr_reduced |> View()
+
+marginal_effects_reduced <- margins(polr_best,
+    variables = c(
+        "Alcohol", "BusinessAcceptsCreditCards", "Caters", "DogsAllowed",
+        "DriveThru", "GoodForDancing", "NoiseLevel", "OutdoorSeating",
+        "RestaurantsAttire", "RestaurantsDelivery", "RestaurantsGoodForGroups",
+        "RestaurantsPriceRange2", "RestaurantsTableService",
+        "RestaurantsTakeOut", "WiFi"
+    ) # copy pasted from above coefficients polr reduced
+)
+
+marginal_effects_reduced %>% summary() # average marginal effects close to zero
+
+# results
+# marginal_effects_reduced %>% summary() %>% write.csv("marginal_effects_reduced.csv")
+
+# plot residuals
+grDevices::windows()
+plot(
+    polr_best$fitted.values, resid(polr_best),
+    xlab = "Fitted Values",
+    ylab = "Residuals",
+    main = "POLR Model Fitted vs Residuals"
+)
+```
+
+```{r}
+grDevices::windows()
+
+par(mfrow = c(1, 2))
+
+plot(
+    res, fitted(best_fit),
+    main = "LM Model Residuals vs Fitted Values",
+    xlab = "Fitted Values", ylab = "Residuals"
+) # suggests model not appropriate for data
+
+plot(
+    polr_best$fitted.values, resid(polr_best),
+    xlab = "Fitted Values",
+    ylab = "Residuals",
+    main = "POLR Model Fitted vs Residuals"
+)
+
+marginal_effects_reduced %>%
+    summary() %>%
+    ggplot(aes(x = factor, y = AME)) +
+    geom_bar(stat = "identity") +
+    coord_flip() +
+    labs(
+        title = "Average Marginal Effect of Each Variable",
+        x = "Variable",
+        y = "Average Marginal Effect"
+    )
+```
+
+
+
+
